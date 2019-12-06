@@ -38,7 +38,7 @@ function preload() {
   this.load.image('easy', 'assets/easy.png');
   this.load.image('hard', 'assets/hard.png');
   this.load.image('ouch', 'assets/ouch.png');
-  this.load.audio('fightsong', 'assets/fightsong.mp3');
+  this.load.audio('fightsong', 'assets/Trojanfights_short.mp3');
   this.load.image('tileset', 'assets/tileset.png');
   this.load.tilemapTiledJSON('map', 'assets/tilemap.json');
   this.load.image('player', 'assets/skateboi.png');
@@ -48,13 +48,13 @@ function preload() {
   this.load.image('trojansHorse', 'assets/trojansHorse.png');
 }
 
-// Set up game state 
+// setting up game state 
 const gameState = {
   width: 6000,
   height: 450,
   hard: false,
   delay: 2000,
-  bikerVelocity: 160,
+  bikerVelocity: 260,
   playerVelocity: 200,
   timeLeft: 45,
 };
@@ -63,7 +63,7 @@ function setEasyMode() {
   console.log('easy');
   gameState.timeLeft = 45;
   gameState.delay = 2000;
-  gameState.playerVelocity = 160;
+  gameState.playerVelocity = 260;
   gameState.bikerVelocity = 200;
 }
 function setHardMode() {
