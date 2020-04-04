@@ -23,7 +23,6 @@ const game = new Phaser.Game(config);
 var player;
 var bikers;
 var morning;
-var rushHour;
 var map;
 var groundlayer, backgroundlayer, obstaclelayer, coffeelayer, horselayer;
 // to keep track of:
@@ -66,13 +65,7 @@ function setEasyMode() {
   gameState.playerVelocity = 260;
   gameState.bikerVelocity = 200;
 }
-function setHardMode() {
-    console.log('hard');
-    gameState.timeLeft = 45;
-    gameState.delay = 800;
-    gameState.playerVelocity = 260;
-    gameState.bikerVelocity = 260;
-}
+
 
 function create() {
   this.input.on('pointerup', () =>{
@@ -103,18 +96,14 @@ function create() {
 
   // setting up the LEVELS of DIFFICULTY
   morning = this.add.sprite(100, 400, 'easy');
-  rushHour = this.add.sprite(350, 400, 'hard');
+  
   morning.setInteractive();
-  rushHour.setInteractive();
+  
 
   morning.on('pointerup', function() {
     setEasyMode();
-    rushHour.destroy();
   });
-  rushHour.on('pointerup', function() {
-    setHardMode();
-    morning.destroy();
-  });
+  
 
   // set the boundaries of our game world
   this.physics.world.bounds.width = gameState.width;
