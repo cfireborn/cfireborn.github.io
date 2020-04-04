@@ -177,13 +177,13 @@ function create() {
   function runTimer () {
     gameState.timeLeft--;
     if(gameState.timeLeft > 0){
-
       timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
+      console.log(gameState.timeLeft);
     }else{
       timeText.setText("TIMER INACTIVE");
     }
 
-    if (gameState.timeLeft <= 0 && gameState.timeLeft > -2) {
+    if (gameState.timeLeft <= 0 && gameState.timeLeft > -1) {
       this.sound.play();
       timeText.setText(gameState.timeLeft);
     }
