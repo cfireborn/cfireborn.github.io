@@ -198,7 +198,7 @@ function create() {
   // set bounds so the camera won't go outside the game world
   this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
   // make the camera follow the player
-  this.cameras.main.startFollow(player);
+  
 
   obstaclelayer.setTileIndexCallback(15, destroyObstacle, this); 
   obstaclelayer.setTileIndexCallback(20, destroyObstacle, this);   
