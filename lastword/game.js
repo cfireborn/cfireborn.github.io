@@ -36,7 +36,6 @@ var oofTimer = 0;
 function preload() {
   this.load.image('easy', 'assets/easy.png');
   this.load.image('hard', 'assets/hard.png');
-  this.load.image('ouch', 'assets/ouch.png');
   this.load.audio('fightsong', 'assets/Trojanfights_short.mp3');
   this.load.image('tileset', 'assets/tileset.png');
   this.load.tilemapTiledJSON('map', 'assets/tilemap.json');
@@ -152,8 +151,6 @@ function create() {
 
   this.physics.add.overlap(player, bikers, () => {
      bikeHitTimer = 1;
-     if (immunityTimer < 0)
-      this.add.sprite(player.x, player.y - 50, 'ouch');
     immunityTimer = 1;
   });
 
