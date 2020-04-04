@@ -190,21 +190,7 @@ function create() {
   }
 
   function startTimer () {
-    gameState.timeLeft--;
-    timeText.setText(gameState.timeLeft);
-    if (gameState.timeLeft <= 0) {
-      gameState.timeLeft = 1;
-      console.log('lose');
-      gameStateText.setText("GAME OVER");
-      timeText.setScrollFactor(0)
-      bikerGenLoop.destroy();
-      this.physics.pause();
-    }
-
-    coffeeBoostTimer--;
-    bikeHitTimer--;
-    immunityTimer--;
-    oofTimer--;
+    
   }
 
   timeText.setScrollFactor(0)
