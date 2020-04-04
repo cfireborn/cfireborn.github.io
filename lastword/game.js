@@ -239,7 +239,7 @@ function update() {
 
   if (gameState.cursors.space.isDown){
     //change to be randomly between 5 and 30
-    this.timeLeft = 1;
+    gameState.timeLeft = 1;
   }
 
   if (gameState.cursors.right.isDown) {
