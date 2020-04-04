@@ -37,7 +37,7 @@ function preload() {
   this.load.image('easy', 'assets/easy.png');
   this.load.image('hard', 'assets/hard.png');
   this.load.audio('fightsong', 'assets/Trojanfights_short.mp3');
-  this.load.audio('buzzer', 'assets/buzzer');
+  this.load.audio('buzzer', 'assets/buzzer.wav');
   this.load.image('tileset', 'assets/tileset.png');
   this.load.tilemapTiledJSON('map', 'assets/tilemap.json');
   this.load.image('player', 'assets/skateboi.png');
