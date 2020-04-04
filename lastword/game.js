@@ -37,6 +37,7 @@ function preload() {
   this.load.image('easy', 'assets/easy.png');
   this.load.image('hard', 'assets/hard.png');
   this.load.audio('fightsong', 'assets/Trojanfights_short.mp3');
+  this.load.audio('buzzer', 'assets/buzzer.wav');
   this.load.image('tileset', 'assets/tileset.png');
   this.load.tilemapTiledJSON('map', 'assets/tilemap.json');
   this.load.image('player', 'assets/skateboi.png');
@@ -72,7 +73,7 @@ function create() {
         game.sound.context.resume();
       }
     });   
-  this.sound = this.sound.add('fightsong');
+  this.sound = this.sound.add('buzzer');
   this.sound.play();
 
   // setting up the MAP
@@ -235,7 +236,8 @@ function update() {
   if (oofTimer > 0) {
     speed = gameState.playerVelocity - 100;
   }
-
+  if (gameState.cursors.space.isDown)
+    this.sound.play();
   if (gameState.cursors.right.isDown) {
     player.setVelocityX(speed);
   }
