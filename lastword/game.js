@@ -56,12 +56,12 @@ const gameState = {
   delay: 2000,
   bikerVelocity: 260,
   playerVelocity: 200,
-  timeLeft: 0,
+  timeLeft: 3,
 };
 
 function setEasyMode() {
   console.log('easy');
-  gameState.timeLeft = 0;
+  gameState.timeLeft = 3;
   gameState.delay = 2000;
   gameState.playerVelocity = 260;
   gameState.bikerVelocity = 200;
@@ -177,15 +177,15 @@ function create() {
   function runTimer () {
     gameState.timeLeft--;
     if(gameState.timeLeft > 0){
-
-      timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
+      timeText.setText("TIMER ACTIVATED: 5-15 SECONDS");
+      console.log(gameState.timeLeft);
     }else{
       timeText.setText("TIMER INACTIVE");
     }
 
-    if (gameState.timeLeft == 0) {
+    if (gameState.timeLeft <= 0 && gameState.timeLeft > -1) {
       this.sound.play();
-      timeText.setText("TIMER INACTIVE");
+      timeText.setText(gameState.timeLeft);
     }
   }
 
@@ -239,7 +239,7 @@ function update() {
 
   if (gameState.cursors.space.isDown){
     //change to be randomly between 5 and 30
-    this.timeLeft = 0;
+    gameState.timeLeft = (Math.random() * 10) + 5;
   }
 
   if (gameState.cursors.right.isDown) {
