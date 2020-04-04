@@ -56,12 +56,12 @@ const gameState = {
   delay: 2000,
   bikerVelocity: 260,
   playerVelocity: 200,
-  timeLeft: 0,
+  timeLeft: 3,
 };
 
 function setEasyMode() {
   console.log('easy');
-  gameState.timeLeft = 0;
+  gameState.timeLeft = 3;
   gameState.delay = 2000;
   gameState.playerVelocity = 260;
   gameState.bikerVelocity = 200;
@@ -239,7 +239,7 @@ function update() {
 
   if (gameState.cursors.space.isDown){
     //change to be randomly between 5 and 30
-    gameState.timeLeft = 1;
+    gameState.timeLeft = (Math.random() * 25) + 6;
   }
 
   if (gameState.cursors.right.isDown) {
