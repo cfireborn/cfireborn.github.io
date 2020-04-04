@@ -177,20 +177,21 @@ function create() {
 
   function runTimer () {
     gameState.timeLeft--;
-    if(gameState.timeLeft > 0)
-    timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
-    if (gameState.timeLeft <= 0) {
-      this.sound.play();
+    if(gameState.timeLeft > 0){
+
+      timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
+    }else{
+      timeText.setText("TIMER INACTIVE");
     }
 
-    coffeeBoostTimer--;
-    bikeHitTimer--;
-    immunityTimer--;
-    oofTimer--;
+    if (gameState.timeLeft == 0) {
+      this.sound.play();
+      timeText.setText("TIMER INACTIVE");
+    }
   }
 
   function startTimer () {
-    
+
   }
 
   timeText.setScrollFactor(0)
