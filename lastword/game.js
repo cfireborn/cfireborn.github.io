@@ -75,7 +75,6 @@ function create() {
       }
     });   
   this.sound = this.sound.add('buzzer');
-  this.sound.play();
 
   // setting up the MAP
   map = this.make.tilemap({key: 'map'});
