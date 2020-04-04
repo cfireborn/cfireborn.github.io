@@ -177,7 +177,7 @@ function create() {
   function runTimer () {
     gameState.timeLeft--;
     if(gameState.timeLeft > 0){
-      timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
+      timeText.setText("TIMER ACTIVATED: 5-15 SECONDS");
       console.log(gameState.timeLeft);
     }else{
       timeText.setText("TIMER INACTIVE");
@@ -239,7 +239,7 @@ function update() {
 
   if (gameState.cursors.space.isDown){
     //change to be randomly between 5 and 30
-    gameState.timeLeft = (Math.random() * 25) + 6;
+    gameState.timeLeft = (Math.random() * 15) + 5;
   }
 
   if (gameState.cursors.right.isDown) {
