@@ -165,15 +165,30 @@ function create() {
   gameStateText = this.add.text(150, 225, '', { fontSize: '30px', fill: '#ffffff'});
 
   // setting up timer
-  timeText = this.add.text(350, 10, gameState.timeLeft, { fontSize: '20px', fill: '#ffffff'});
+  timeText = this.add.text(50, 10, gameState.timeLeft, { fontSize: '20px', fill: '#ffffff'});
+  this.add.text("")
   const timerLoop = this.time.addEvent({
     delay: 1000,
-    callback: printTime,
+    callback: runTimer,
     callbackScope: this,
     loop: true,
   });
 
-  function printTime () {
+  function runTimer () {
+    gameState.timeLeft--;
+    if(gameState.timeLeft > 0)
+    timeText.setText("TIMER ACTIVATED: 5-30 SECONDS");
+    if (gameState.timeLeft <= 0) {
+      this.sound.play();
+    }
+
+    coffeeBoostTimer--;
+    bikeHitTimer--;
+    immunityTimer--;
+    oofTimer--;
+  }
+
+  function startTimer () {
     gameState.timeLeft--;
     timeText.setText(gameState.timeLeft);
     if (gameState.timeLeft <= 0) {
@@ -239,10 +254,14 @@ function update() {
     speed = gameState.playerVelocity - 100;
   }
 
+  if (gameState.cursors.space.isDown){
+    startTimer();
+  }
+
   if (gameState.cursors.right.isDown) {
     player.setVelocityX(speed);
   }
-  else if (gameState.cursors.space.isDown) {
+  else if (gameState.cursors.left.isDown) {
     player.setVelocityX(-speed);
   } 
   else {
