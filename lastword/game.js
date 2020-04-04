@@ -56,12 +56,12 @@ const gameState = {
   delay: 2000,
   bikerVelocity: 260,
   playerVelocity: 200,
-  timeLeft: 45,
+  timeLeft: 0,
 };
 
 function setEasyMode() {
   console.log('easy');
-  gameState.timeLeft = 45;
+  gameState.timeLeft = 0;
   gameState.delay = 2000;
   gameState.playerVelocity = 260;
   gameState.bikerVelocity = 200;
@@ -190,10 +190,6 @@ function create() {
     }
   }
 
-  function startTimer () {
-
-  }
-
   timeText.setScrollFactor(0)
   gameStateText.setScrollFactor(0)
 
@@ -243,8 +239,8 @@ function update() {
   }
 
   if (gameState.cursors.space.isDown){
-    this.sound.play();
-    startTimer();
+    //change to be randomly between 5 and 30
+    this.timeLeft = 0;
   }
 
   if (gameState.cursors.right.isDown) {
