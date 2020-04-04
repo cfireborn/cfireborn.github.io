@@ -185,7 +185,7 @@ function create() {
 
     if (gameState.timeLeft == 0) {
       this.sound.play();
-      timeText.setText("TIMER INACTIVE");
+      timeText.setText(gameState.timeLeft);
     }
   }
 
