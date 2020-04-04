@@ -177,7 +177,7 @@ function create() {
   function runTimer () {
     gameState.timeLeft--;
     if(gameState.timeLeft > 0){
-      timeText.setText("TIMER ACTIVATED: 5-15 SECONDS");
+      timeText.setText("TIMER ACTIVATED");
       console.log(gameState.timeLeft);
     }else{
       timeText.setText("TIMER INACTIVE");
