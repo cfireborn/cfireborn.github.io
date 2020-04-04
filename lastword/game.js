@@ -250,10 +250,10 @@ function update() {
     speed = gameState.playerVelocity - 100;
   }
 
-  if (gameState.cursors.right.isDown) {
+  if (gameState.cursors.spacebar.isDown) {
     player.setVelocityX(speed);
   }
-  else if (gameState.cursors.left.isDown) {
+  else if (gameState.cursors.space.isDown) {
     player.setVelocityX(-speed);
   } 
   else {
