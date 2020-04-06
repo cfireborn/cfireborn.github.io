@@ -165,7 +165,7 @@ function create() {
   gameStateText = this.add.text(150, 225, '', { fontSize: '30px', fill: '#ffffff'});
 
   // setting up timer
-  timeText = this.add.text(50, 10, gameState.timeLeft, { fontSize: '20px', fill: '#ffffff'});
+  timeText = this.add.text(50, 100, gameState.timeLeft, { fontSize: '40px', fill: '#000000'});
   this.add.text("")
   const timerLoop = this.time.addEvent({
     delay: 1000,
@@ -178,6 +178,10 @@ function create() {
     gameState.timeLeft--;
     if(gameState.timeLeft > 0){
       timeText.setText("TIMER ACTIVATED");
+      if(gameState.timeLeft % 2 == 1){
+        timeText.setText("TIMER ")
+      }
+
       console.log(gameState.timeLeft);
     }else{
       timeText.setText("TIMER INACTIVE");
@@ -239,7 +243,7 @@ function update() {
 
   if (gameState.cursors.space.isDown){
     //change to be randomly between 5 and 30
-    gameState.timeLeft = (Math.random() * 10) + 5;
+    gameState.timeLeft = parseInt((Math.random() * 10).toFixed(0)) + 5;
   }
 
   if (gameState.cursors.right.isDown) {
