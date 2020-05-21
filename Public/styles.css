@@ -1,0 +1,26 @@
+.placeholder {
+    background-color: red;
+    margin-right: 20px;
+    font-size: 0.9em;
+    text-transform: uppercase;
+    height: 22px;
+    border-bottom: 1px solid transparent;
+    transition: border-bottom 0.5s;
+}
+
+.anotherClass{
+    background-color: green;
+}
+.placeholder a{
+    color: #8a8a8a;
+    text-decoration: none;
+    transition: color 0.5s;
+}
+
+.placeholder:hover {
+    border-bottom: 1px solid black;
+}
+
+.placeholder a:hover {
+    color: 1px solid black;
+}
