@@ -3,8 +3,8 @@ let participants = [];
 let assignments = {};
 let killWords = [];
 
-// Kill word pool
-const killWordPool = [
+// Default kill word pool
+let killWordPool = [
   "target", "whisper", "sunset", "valley", "anchor",
   "harvest", "summit", "bridge", "pioneer", "union",
   "guardian", "horizon", "voyage", "quest", "pathway"
@@ -31,22 +31,8 @@ function assignTargetsAndKillWords() {
   }
 }
 
-// Add "Enter" key functionality
-// Paste the following logic to handle Enter key events:
-document.getElementById("participant-input").addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
-    initializeGame(); // Trigger initialization
-  }
-});
-
-document.getElementById("player-name").addEventListener("keyup", (event) => {
-  if (event.key === "Enter") {
-    getAssignment(); // Trigger target retrieval
-  }
-});
-
 // Initialize the game
-document.getElementById("initialize-game").addEventListener("click", () => {
+function initializeGame() {
   const input = document.getElementById("participant-input").value.trim();
   if (!input) {
     alert("Please enter at least two participants.");
@@ -62,10 +48,11 @@ document.getElementById("initialize-game").addEventListener("click", () => {
   assignTargetsAndKillWords();
   document.getElementById("game-output").innerHTML = "Game Initialized! Participants have been assigned.";
   document.getElementById("player-section").style.display = "block";
-});
+  document.getElementById("admin-panel").style.display = "block";
+}
 
 // Get assignment for a player
-document.getElementById("get-assignment").addEventListener("click", () => {
+function getAssignment() {
   const name = document.getElementById("player-name").value.trim();
   if (!name) {
     alert("Please enter your name.");
@@ -82,4 +69,63 @@ document.getElementById("get-assignment").addEventListener("click", () => {
     Your target: <strong>${assignment.target}</strong><br>
     Your kill word: <strong>${assignment.killWord}</strong>
   `;
+}
+
+// View assignments (Admin Panel)
+function viewAssignments() {
+  if (participants.length === 0) {
+    document.getElementById("assignments-output").innerHTML = "No assignments to display.";
+    return;
+  }
+
+  let output = "<table border='1' style='width: 100%; text-align: center;'>";
+  output += "<tr><th>Player</th><th>Target</th><th>Kill Word</th></tr>";
+  participants.forEach((participant) => {
+    const { target, killWord } = assignments[participant];
+    output += `<tr><td>${participant}</td><td>${target}</td><td>${killWord}</td></tr>`;
+  });
+  output += "</table>";
+  document.getElementById("assignments-output").innerHTML = output;
+}
+
+// Update kill word pool
+function updateKillWordPool() {
+  const newKillWords = document.getElementById("killword-pool").value.trim();
+  if (!newKillWords) {
+    alert("Kill word pool cannot be empty!");
+    return;
+  }
+
+  killWordPool = newKillWords.split("\n").map((word) => word.trim()).filter((word) => word);
+  alert("Kill word pool updated successfully!");
+}
+
+// Fill the kill word pool textarea with the current pool
+function populateKillWordPool() {
+  const killWordPoolTextArea = document.getElementById("killword-pool");
+  killWordPoolTextArea.value = "\n" + "\n" + "\n" + "\n" + "\n" + killWordPool.join("\n");
+}
+
+// Add event listeners for buttons
+document.getElementById("initialize-game").addEventListener("click", initializeGame);
+document.getElementById("get-assignment").addEventListener("click", getAssignment);
+document.getElementById("view-assignments").addEventListener("click", viewAssignments);
+document.getElementById("update-killword-pool").addEventListener("click", updateKillWordPool);
+
+// Add "Enter" key functionality
+document.getElementById("participant-input").addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault(); // Prevent form submission behavior
+    initializeGame();
+  }
 });
+
+document.getElementById("player-name").addEventListener("keypress", (event) => {
+  if (event.key === "Enter") {
+    event.preventDefault(); // Prevent form submission behavior
+    getAssignment();
+  }
+});
+
+// Populate kill word pool on page load
+document.addEventListener("DOMContentLoaded", populateKillWordPool);
