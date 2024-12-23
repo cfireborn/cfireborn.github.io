@@ -7,14 +7,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const perfectTime = 2000 + Math.random() * 3000; // Random time between 2000ms and 5000ms
   const perfectWindow = 270; // Perfect sear window in milliseconds
 
-  let startTime, holdTime, gameEnded;
+  let startTime, holdTime, gameEnded, checkInterval;
 
-  const updateImage = (timeHeld) => {
+  const updateImageWhileHolding = (currentTime) => {
+    const timeHeld = currentTime - startTime;
+
     if (timeHeld < perfectTime) {
       bruleeImage.src = "partial-sear.png";
     } else if (timeHeld >= perfectTime && timeHeld <= perfectTime + perfectWindow) {
       bruleeImage.src = "perfect-sear.png";
-    } else {
+    } else if (timeHeld > perfectTime + perfectWindow) {
       bruleeImage.src = "burnt.png";
     }
   };
@@ -23,18 +25,16 @@ document.addEventListener("DOMContentLoaded", () => {
     gameEnded = true;
     bruleeButton.disabled = true;
 
+    clearInterval(checkInterval); // Stop checking while the button is held
+
+    const timeInSeconds = (timeHeld / 1000).toFixed(3); // Convert to seconds and format to 3 decimal places
+
     if (timeHeld >= perfectTime && timeHeld <= perfectTime + perfectWindow) {
-      resultMessage.textContent = `Perfect sear! You held for ${timeHeld.toFixed(
-        2
-      )} ms. Refresh to try again!`;
+      resultMessage.textContent = `Perfect sear! You held for ${timeInSeconds} seconds. Refresh to try again!`;
     } else if (timeHeld < perfectTime) {
-      resultMessage.textContent = `Too soon! Held for ${timeHeld.toFixed(
-        2
-      )} ms. Refresh to try again!`;
+      resultMessage.textContent = `Too soon! Held for ${timeInSeconds} seconds. Refresh to try again!`;
     } else {
-      resultMessage.textContent = `Burnt! Held for ${timeHeld.toFixed(
-        2
-      )} ms. Refresh to try again!`;
+      resultMessage.textContent = `Burnt! Held for ${timeInSeconds} seconds. Refresh to try again!`;
     }
   };
 
@@ -42,16 +42,24 @@ document.addEventListener("DOMContentLoaded", () => {
     if (gameEnded) return;
     startTime = performance.now();
     bruleeImage.src = "partial-sear.png";
+
+    // Start interval to continuously update the image while the button is held
+    checkInterval = setInterval(() => {
+      const currentTime = performance.now();
+      updateImageWhileHolding(currentTime);
+    }, 50); // Check every 50ms for responsiveness
   });
 
   bruleeButton.addEventListener("mouseup", () => {
     if (gameEnded) return;
     holdTime = performance.now() - startTime;
-    updateImage(holdTime);
 
     // Play the woosh sound
     wooshSound.currentTime = 0; // Reset the sound to the beginning
     wooshSound.play();
+
+    // Final image update based on total time held
+    updateImageWhileHolding(performance.now());
 
     endGame(holdTime);
   });
