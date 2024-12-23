@@ -5,9 +5,11 @@ let killWords = [];
 
 // Default kill word pool
 let killWordPool = [
-  "target", "whisper", "sunset", "valley", "anchor",
-  "harvest", "summit", "bridge", "pioneer", "union",
-  "guardian", "horizon", "voyage", "quest", "pathway"
+    "ford", "honeywell", "whirlpool", "guardian",
+    "quest", "pioneer", "caterpillar", "oracle", "nike",
+    "fleet", "rider", "summit", "harvest", "banner",
+    "union", "nation", "anchor", "peak", "valley",
+    "horizon", "beacon", "bridge", "voyage", "pathway"
 ];
 
 // Shuffle an array
