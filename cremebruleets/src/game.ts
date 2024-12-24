@@ -52,11 +52,11 @@ class BruleeGame {
     };
 
     return {
-      woosh: createAudio('burning-woosh.mp3'),
-      steadyFire: createAudio('steady-fire.mp3'),
-      hiss: createAudio('hiss.mp3'),
-      ovenDing: createAudio('oven-ding.mp3'),
-      flameBurst: createAudio('flame-burst.mp3')
+      woosh: createAudio('sfx/burning-woosh.mp3'),
+      steadyFire: createAudio('sfx/steady-fire.mp3'),
+      hiss: createAudio('sfx/hiss.mp3'),
+      ovenDing: createAudio('sfx/oven-ding.mp3'),
+      flameBurst: createAudio('sfx/flame-burst.mp3')
     };
   }
 
@@ -64,11 +64,11 @@ class BruleeGame {
     this.audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
     
     const soundFiles = [
-      ['woosh', 'burning-woosh.mp3'],
-      ['steadyFire', 'steady-fire.mp3'],
-      ['hiss', 'hiss.mp3'],
-      ['ovenDing', 'oven-ding.mp3'],
-      ['flameBurst', 'flame-burst.mp3']
+      ['woosh', 'sfx/burning-woosh.mp3'],
+      ['steadyFire', 'sfx/steady-fire.mp3'],
+      ['hiss', 'sfx/hiss.mp3'],
+      ['ovenDing', 'sfx/oven-ding.mp3'],
+      ['flameBurst', 'sfx/flame-burst.mp3']
     ];
 
     for (const [name, file] of soundFiles) {
@@ -126,10 +126,10 @@ class BruleeGame {
     if (timeHeld < this.perfectTime) {
       this.quadraticFade(timeHeld);
     } else if (timeHeld >= this.perfectTime && timeHeld <= this.perfectTime + this.perfectWindow) {
-      this.elements.bruleePartial.src = 'perfect-sear.png';
+      this.elements.bruleePartial.src = 'art/perfect-sear.png';
       this.elements.bruleePartial.style.opacity = '1';
     } else {
-      this.elements.bruleePartial.src = 'burnt.png';
+      this.elements.bruleePartial.src = 'art/burnt.png';
       this.elements.bruleePartial.style.opacity = '1';
     }
   }
@@ -194,13 +194,22 @@ class BruleeGame {
   };
 
   private setupEventListeners(): void {
-    this.elements.bruleeButton.addEventListener('mousedown', this.startHolding);
-    this.elements.bruleeButton.addEventListener('mouseup', this.stopHolding);
+    console.log('Setting up event listeners');
+    this.elements.bruleeButton.addEventListener('mousedown', (e) => {
+      console.log('mousedown triggered');
+      this.startHolding();
+    });
+    this.elements.bruleeButton.addEventListener('mouseup', (e) => {
+      console.log('mouseup triggered');
+      this.stopHolding();
+    });
     this.elements.bruleeButton.addEventListener('touchstart', (e: TouchEvent) => {
+      console.log('touchstart triggered');
       e.preventDefault();
       this.startHolding();
     });
     this.elements.bruleeButton.addEventListener('touchend', (e: TouchEvent) => {
+      console.log('touchend triggered');
       e.preventDefault();
       this.stopHolding();
     });
@@ -209,5 +218,6 @@ class BruleeGame {
 
 // Initialize game when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOM loaded, creating game');
   new BruleeGame();
 });
