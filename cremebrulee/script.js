@@ -4,96 +4,60 @@ document.addEventListener("DOMContentLoaded", () => {
   const bruleePartial = document.getElementById("brulee-partial");
   const resultMessage = document.getElementById("result-message");
 
-  const perfectTime = 2000 + Math.random() * 3000; // Random time between 2000ms and 5000ms
-  const perfectWindow = 300; // Perfect sear window in milliseconds
+  const perfectTime = 2000 + Math.random() * 3000;
+  const perfectWindow = 300;
 
   let startTime, holdTime, gameEnded, checkInterval;
-  
-  // Audio context setup
-  let audioContext;
-  let sounds = {};
-  let steadyFireSource = null;
-  
-  // Initialize audio on first user interaction
-  const initAudio = async () => {
-    if (audioContext) return; // Already initialized
-    
-    try {
-      audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      
-      // Load all sounds
-      const soundFiles = {
-        woosh: 'burning-woosh.mp3',
-        steadyFire: 'steady-fire.mp3',
-        hiss: 'hiss.mp3',
-        ovenDing: 'oven-ding.mp3',
-        flameBurst: 'flame-burst.mp3'
-      };
 
-      for (const [name, file] of Object.entries(soundFiles)) {
-        const response = await fetch(file);
-        const arrayBuffer = await response.arrayBuffer();
-        const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-        sounds[name] = audioBuffer;
-      }
-    } catch (error) {
-      console.error('Audio initialization failed:', error);
-    }
+  // Detect mobile device
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+  // Audio setup
+  const sounds = {
+    woosh: new Audio("burning-woosh.mp3"),
+    steadyFire: new Audio("steady-fire.mp3"),
+    hiss: new Audio("hiss.mp3"),
+    ovenDing: new Audio("oven-ding.mp3"),
+    flameBurst: new Audio("flame-burst.mp3")
   };
 
-  // Function to play a one-shot sound
+  // Set up looping for steady fire
+  sounds.steadyFire.loop = true;
+
+  // Preload all sounds
+  Object.values(sounds).forEach(sound => {
+    sound.load();
+  });
+
   const playSound = (soundName) => {
-    if (!audioContext || !sounds[soundName]) return;
-    
     try {
-      const source = audioContext.createBufferSource();
-      source.buffer = sounds[soundName];
-      source.connect(audioContext.destination);
-      source.start(0);
+      if (sounds[soundName]) {
+        // For non-looping sounds, reset to start
+        if (soundName !== 'steadyFire') {
+          sounds[soundName].currentTime = 0;
+        }
+        sounds[soundName].play().catch(error => {
+          console.error('Error playing sound:', error);
+        });
+      }
     } catch (error) {
       console.error('Error playing sound:', error);
     }
   };
 
-  // Function to play looping steady fire sound
-  const startSteadyFire = () => {
-    if (!audioContext || !sounds.steadyFire) return;
-    
+  const stopSound = (soundName) => {
     try {
-      steadyFireSource = audioContext.createBufferSource();
-      steadyFireSource.buffer = sounds.steadyFire;
-      steadyFireSource.loop = true;
-      steadyFireSource.connect(audioContext.destination);
-      steadyFireSource.start(0);
-    } catch (error) {
-      console.error('Error starting steady fire:', error);
-    }
-  };
-
-  // Function to stop steady fire sound
-  const stopSteadyFire = () => {
-    if (steadyFireSource) {
-      try {
-        steadyFireSource.stop();
-        steadyFireSource = null;
-      } catch (error) {
-        console.error('Error stopping steady fire:', error);
+      if (sounds[soundName]) {
+        sounds[soundName].pause();
+        sounds[soundName].currentTime = 0;
       }
+    } catch (error) {
+      console.error('Error stopping sound:', error);
     }
   };
-
-  // Initialize audio on first touch/click
-  const initializeOnFirstInteraction = () => {
-    initAudio();
-    document.removeEventListener('touchstart', initializeOnFirstInteraction);
-    document.removeEventListener('click', initializeOnFirstInteraction);
-  };
-
-  document.addEventListener('touchstart', initializeOnFirstInteraction);
-  document.addEventListener('click', initializeOnFirstInteraction);
 
   const quadraticFade = (elapsed) => {
-    const maxOpacity = 0.85; // 85% opacity
+    const maxOpacity = 0.85;
     const progress = Math.min(elapsed / perfectTime, 1);
     const opacity = (1 - Math.pow(1 - progress, 2)) * maxOpacity;
     bruleePartial.style.opacity = opacity;
@@ -114,7 +78,8 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   const playReleaseSound = (timeHeld) => {
-    stopSteadyFire();
+    stopSound('steadyFire');
+    stopSound('woosh');
 
     if (timeHeld < perfectTime) {
       playSound('flameBurst');
@@ -143,12 +108,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const startHolding = () => {
     if (gameEnded) return;
-    if (audioContext && audioContext.state === 'suspended') {
-      audioContext.resume();
-    }
     startTime = performance.now();
+    
     playSound('woosh');
-    startSteadyFire();
+    playSound('steadyFire');
 
     checkInterval = setInterval(() => {
       const currentTime = performance.now();
@@ -159,11 +122,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const stopHolding = () => {
     if (gameEnded) return;
     holdTime = performance.now() - startTime;
+    
     playReleaseSound(holdTime);
     updateImageWhileHolding(performance.now());
     endGame(holdTime);
   };
 
+  // Add event listeners for both mouse and touch events
   bruleeButton.addEventListener("mousedown", startHolding);
   bruleeButton.addEventListener("mouseup", stopHolding);
   bruleeButton.addEventListener("touchstart", (e) => {
