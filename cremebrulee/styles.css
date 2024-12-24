@@ -148,3 +148,13 @@ button:hover {
   z-index: 2;
   opacity: 0;
 }
+
+.version {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
+  padding: 0;
+}
