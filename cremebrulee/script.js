@@ -14,11 +14,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Audio setup
   const sounds = {
-    woosh: new Audio("burning-woosh.mp3"),
-    steadyFire: new Audio("steady-fire.mp3"),
-    hiss: new Audio("hiss.mp3"),
-    ovenDing: new Audio("oven-ding.mp3"),
-    flameBurst: new Audio("flame-burst.mp3")
+    woosh: new Audio("sfx/burning-woosh.mp3"),
+    steadyFire: new Audio("sfx/steady-fire.mp3"),
+    hiss: new Audio("sfx/hiss.mp3"),
+    ovenDing: new Audio("sfx/oven-ding.mp3"),
+    flameBurst: new Audio("sfx/flame-burst.mp3")
   };
 
   // Set up looping for steady fire
@@ -69,10 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (timeHeld < perfectTime) {
       quadraticFade(timeHeld);
     } else if (timeHeld >= perfectTime && timeHeld <= perfectTime + perfectWindow) {
-      bruleePartial.src = "perfect-sear.png";
+      bruleePartial.src = "art/perfect-sear.png";
       bruleePartial.style.opacity = 1;
     } else if (timeHeld > perfectTime + perfectWindow) {
-      bruleePartial.src = "burnt.png";
+      bruleePartial.src = "art/burnt.png";
       bruleePartial.style.opacity = 1;
     }
   };
