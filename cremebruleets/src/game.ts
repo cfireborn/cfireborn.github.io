@@ -117,8 +117,9 @@ class BruleeGame {
     const maxOpacity = 0.85;
     const progress = Math.min(elapsed / this.perfectTime, 1);
     const opacity = (1 - Math.pow(1 - progress, 2)) * maxOpacity;
+    console.log('Opacity:', opacity);
     this.elements.bruleePartial.style.opacity = opacity.toString();
-  }
+}
 
   private updateImageWhileHolding(currentTime: number): void {
     const timeHeld = currentTime - this.startTime;
@@ -166,22 +167,19 @@ class BruleeGame {
   }
 
   private startHolding = async (): Promise<void> => {
+    console.log('startHolding called');
     if (this.gameEnded) return;
-    
-    // Initialize audio context on first interaction
-    if (!this.audioContext) {
-      await this.initializeAudioContext();
-    }
+    console.log('game not ended');
     
     this.startTime = performance.now();
+    console.log('startTime:', this.startTime);
     
-    await this.playSound('woosh');
-    await this.playSound('steadyFire');
-
     this.checkInterval = window.setInterval(() => {
-      const currentTime = performance.now();
-      this.updateImageWhileHolding(currentTime);
+        console.log('interval tick');
+        const currentTime = performance.now();
+        this.updateImageWhileHolding(currentTime);
     }, 50);
+    if (this.gameEnded) return;
   };
 
   private stopHolding = async (): Promise<void> => {
