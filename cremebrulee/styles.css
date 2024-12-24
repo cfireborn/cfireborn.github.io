@@ -158,3 +158,48 @@ button:hover {
   margin: 0;
   padding: 0;
 }
+
+.accordion {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  width: 225px;
+  text-align: left;
+  z-index: 3;
+}
+
+.accordion-button {
+  background-color: #f1f1f1;
+  color: #444;
+  cursor: pointer;
+  font-size: 0.7rem;
+  padding: 4px 6px;
+  width: auto;
+  text-align: left;
+  border: none;
+  outline: none;
+  transition: 0.4s;
+}
+
+.accordion-button:hover {
+  background-color: #ddd;
+}
+
+.accordion-content {
+  padding: 0 8px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  background-color: white;
+}
+
+.accordion-content ul {
+  list-style-type: none;
+  padding-left: 0;
+}
+
+.accordion-content p,
+.accordion-content li {
+  font-size: 0.5rem;
+  line-height: 1.3;
+}

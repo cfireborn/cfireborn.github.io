@@ -15,8 +15,31 @@
     </div>
     <button id="brulee-button">Brulee</button>
     <p id="result-message"></p>
-    <p class="version">v1.0.1</p>
+    <p class="version">v1.0.2</p>
+    <div class="accordion">
+      <button class="accordion-button">Credits</button>
+      <div class="accordion-content">
+        <p>Made by First Draft Games:</p>
+        <ul>
+          <li>Andrew Weller</li>
+          <li>Reuben Levine</li>
+          <li>Charlie Feuerborn</li>
+        </ul>
+      </div>
+    </div>
+    
   </div>
   <script src="script.js"></script>
+  <script>
+    document.querySelector('.accordion-button').addEventListener('click', function() {
+      this.classList.toggle('active');
+      var content = this.nextElementSibling;
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    });
+  </script>
 </body>
 </html>
