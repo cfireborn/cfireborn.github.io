@@ -77,9 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  const playReleaseSound = (timeHeld) => {
+  const playReleaseSound = async (timeHeld) => {
     stopSound('steadyFire');
     stopSound('woosh');
+
+    // Wait a moment before playing the result sound
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     if (timeHeld < perfectTime) {
       playSound('flameBurst');
