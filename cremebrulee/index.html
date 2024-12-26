@@ -16,7 +16,7 @@
     </div>
     <button id="brulee-button">Brulee</button>
     <p id="result-message"></p>
-    <p class="version">v1.0.3</p>
+    <p class="version">v1.0.4</p>
     <div class="accordion">
       <button class="accordion-button">Credits</button>
       <div class="accordion-content">
@@ -28,7 +28,31 @@
         </ul>
       </div>
     </div>
+    <div id="leaderboard-container">
+      <div id="counts">
+        <p>Daily Attempts: <span id="daily-count">--</span></p>
+        <p>Total Attempts: <span id="total-count">--</span></p>
+      </div>
+      <div id="leaderboard" style="display:none">
+        <h3>Daily Top Scores</h3>
+        <div id="leaderboard-entries"></div>
+      </div>
+      <div id="name-entry" style="display:none">
+        <input type="text" id="player-name" placeholder="Enter your name">
+        <button id="submit-score">Submit Score</button>
+      </div>
+    </div>
   </div>
+  <script src="sdk-javascript-web/src/ApiClient.js"></script>
+  <script src="sdk-javascript-web/src/index.js"></script>
+  <script src="sdk-javascript-web/src/snapser-models/AuthServiceApi.js"></script>
+  <script src="sdk-javascript-web/src/snapser-models/LeaderboardsServiceApi.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/AuthAnonLoginRequest.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/AuthAnonLoginResponse.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/LeaderboardsSetScoreRequest.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/LeaderboardsGetScoresResponse.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/LeaderboardsIncrementScoreRequest.js"></script>
+  <script src="sdk-javascript-web/src/snapser-apis/IncrementScoreRequest.js"></script>
   <script src="script.js"></script>
   <script>
     document.querySelector('.accordion-button').addEventListener('click', function() {

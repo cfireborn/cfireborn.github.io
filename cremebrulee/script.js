@@ -1,16 +1,143 @@
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const bruleeButton = document.getElementById("brulee-button");
   const bruleeUncooked = document.getElementById("brulee-uncooked");
   const bruleePartial = document.getElementById("brulee-partial");
   const resultMessage = document.getElementById("result-message");
+  const nameEntry = document.getElementById("name-entry");
+  const playerNameInput = document.getElementById("player-name");
+  const submitScoreButton = document.getElementById("submit-score");
+  const leaderboard = document.getElementById("leaderboard");
+  const leaderboardEntries = document.getElementById("leaderboard-entries");
+  const dailyCount = document.getElementById("daily-count");
+  const totalCount = document.getElementById("total-count");
 
   const perfectTime = 2000 + Math.random() * 3000;
   const perfectWindow = 300;
 
   let startTime, holdTime, gameEnded, checkInterval;
+  let authClient, leaderboardClient;
+  let userToken = null;
+  let currentScore = null;
 
-  // Detect mobile device
-  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  // Initialize API clients
+  const initializeClients = () => {
+    authClient = new AuthServiceApi();
+    leaderboardClient = new LeaderboardsServiceApi();
+  };
+
+  // Update count displays
+  const updateCounts = async () => {
+    try {
+      const dailyResponse = await leaderboardClient.getScores(
+        "DailyBruleeCount", 
+        "top", 
+        1, 
+        userToken
+      );
+      const totalResponse = await leaderboardClient.getScores(
+        "LifetimeBruleeCount", 
+        "top", 
+        1, 
+        userToken
+      );
+      
+      dailyCount.textContent = dailyResponse.user_scores[0]?.score || "0";
+      totalCount.textContent = totalResponse.user_scores[0]?.score || "0";
+    } catch (error) {
+      console.error("Error updating counts:", error);
+    }
+  };
+
+  // Increment attempt counters
+  const incrementCounts = async () => {
+    try {
+      await leaderboardClient.incrementScore(
+        "DailyBruleeCount",
+        "global",
+        userToken,
+        { delta: 1 }
+      );
+      await leaderboardClient.incrementScore(
+        "LifetimeBruleeCount",
+        "global",
+        userToken,
+        { delta: 1 }
+      );
+      updateCounts();
+    } catch (error) {
+      console.error("Error incrementing counts:", error);
+    }
+  };
+
+  // Update leaderboard display
+  const updateLeaderboard = async () => {
+    try {
+      const response = await leaderboardClient.getScores(
+        "DailyBruleeScores",
+        "top",
+        10,
+        userToken
+      );
+      
+      leaderboardEntries.innerHTML = "";
+      response.user_scores.forEach((score, index) => {
+        const entry = document.createElement("div");
+        entry.className = "leaderboard-entry";
+        entry.innerHTML = `
+          <span>#${index + 1} ${score.user_metadata?.displayName || 'Anonymous'}</span>
+          <span>${(score.score / 1000).toFixed(3)}s</span>
+        `;
+        leaderboardEntries.appendChild(entry);
+      });
+    } catch (error) {
+      console.error("Error updating leaderboard:", error);
+    }
+  };
+
+  // Handle score submission
+  const submitScore = async () => {
+    if (!currentScore || !playerNameInput.value) return;
+    
+    try {
+      const displayName = playerNameInput.value;
+      const anonymousResponse = await authClient.anonLogin({
+        username: `player_${Date.now()}`,
+        create_user: true
+      });
+      
+      userToken = anonymousResponse.user.session_token;
+      
+      await leaderboardClient.setScore(
+        "DailyBruleeScores",
+        anonymousResponse.user.id,
+        userToken,
+        {
+          score: currentScore,
+          user_metadata: { displayName }
+        }
+      );
+      
+      nameEntry.style.display = "none";
+      leaderboard.style.display = "block";
+      updateLeaderboard();
+    } catch (error) {
+      console.error("Error submitting score:", error);
+    }
+  };
+
+  // Initialize anonymous session for counting
+  const initializeSession = async () => {
+    try {
+      const response = await authClient.anonLogin({
+        username: `counter_${Date.now()}`,
+        create_user: true
+      });
+      userToken = response.user.session_token;
+      updateCounts();
+    } catch (error) {
+      console.error("Error initializing session:", error);
+    }
+  };
 
   // Audio setup
   const sounds = {
@@ -21,10 +148,8 @@ document.addEventListener("DOMContentLoaded", () => {
     flameBurst: new Audio("sfx/flame-burst.mp3")
   };
 
-  // Set up looping for steady fire
   sounds.steadyFire.loop = true;
 
-  // Preload all sounds
   Object.values(sounds).forEach(sound => {
     sound.load();
   });
@@ -32,7 +157,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const playSound = (soundName) => {
     try {
       if (sounds[soundName]) {
-        // For non-looping sounds, reset to start
         if (soundName !== 'steadyFire') {
           sounds[soundName].currentTime = 0;
         }
@@ -81,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
     stopSound('steadyFire');
     stopSound('woosh');
 
-    // Wait a moment before playing the result sound
     await new Promise(resolve => setTimeout(resolve, 100));
 
     if (timeHeld < perfectTime) {
@@ -93,19 +216,26 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
+  submitScoreButton.addEventListener("click", submitScore);
+
   const endGame = (timeHeld) => {
     gameEnded = true;
     bruleeButton.disabled = true;
     clearInterval(checkInterval);
 
     const timeInSeconds = (timeHeld / 1000).toFixed(3);
+    incrementCounts();
 
     if (timeHeld >= perfectTime && timeHeld <= perfectTime + perfectWindow) {
-      resultMessage.textContent = `Perfect sear! You held for ${timeInSeconds} seconds. Refresh to try again!`;
+      currentScore = timeHeld;
+      resultMessage.textContent = `Perfect sear! You held for ${timeInSeconds} seconds.`;
+      nameEntry.style.display = "block";
     } else if (timeHeld < perfectTime) {
-      resultMessage.textContent = `Too soon! Held for ${timeInSeconds} seconds. Refresh to try again!`;
+      currentScore = timeHeld;
+      resultMessage.textContent = `Too soon! Held for ${timeInSeconds} seconds.`;
+      nameEntry.style.display = "block";
     } else {
-      resultMessage.textContent = `Burnt! Held for ${timeInSeconds} seconds. Refresh to try again!`;
+      resultMessage.textContent = `Burnt! Held for ${timeInSeconds} seconds.`;
     }
   };
 
@@ -142,4 +272,8 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
     stopHolding();
   });
+
+  // Initialize everything
+  initializeClients();
+  await initializeSession();
 });

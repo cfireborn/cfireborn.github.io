@@ -203,3 +203,45 @@ button:hover {
   font-size: 0.5rem;
   line-height: 1.3;
 }
+#leaderboard-container {
+  margin-top: 2rem;
+  text-align: left;
+}
+
+#counts {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+#leaderboard {
+  background: #f8f8f8;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+#leaderboard h3 {
+  margin-bottom: 0.5rem;
+}
+
+.leaderboard-entry {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.3rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+#name-entry {
+  margin-top: 1rem;
+}
+
+#name-entry input {
+  padding: 0.5rem;
+  margin-right: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+#name-entry button {
+  padding: 0.5rem 1rem;
+}
