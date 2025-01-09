@@ -1,3 +1,10 @@
+import ApiClient from './sdk-javascript-web/src/ApiClient.js';
+import { AuthServiceApi } from './sdk-javascript-web/src/snapser-models/AuthServiceApi.js';
+import { LeaderboardsServiceApi } from './sdk-javascript-web/src/snapser-models/LeaderboardsServiceApi.js';
+import { AuthAnonLoginRequest } from './sdk-javascript-web/src/snapser-apis/AuthAnonLoginRequest.js';
+import { LeaderboardsSetScoreRequest } from './sdk-javascript-web/src/snapser-apis/LeaderboardsSetScoreRequest.js';
+import { IncrementScoreRequest } from './sdk-javascript-web/src/snapser-apis/IncrementScoreRequest.js';
+
 document.addEventListener("DOMContentLoaded", async () => {
   const bruleeButton = document.getElementById("brulee-button");
   const bruleeUncooked = document.getElementById("brulee-uncooked");
