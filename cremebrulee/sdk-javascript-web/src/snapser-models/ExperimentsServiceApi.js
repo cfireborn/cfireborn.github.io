@@ -12,9 +12,9 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import ExperimentsGetUserExperimentsResponse from '../snapser-apis/ExperimentsGetUserExperimentsResponse';
-import ExperimentsUserExperiment from '../snapser-apis/ExperimentsUserExperiment';
+import ApiClient from "../ApiClient.js";
+import ExperimentsGetUserExperimentsResponse from '../snapser-apis/ExperimentsGetUserExperimentsResponse.js';
+import ExperimentsUserExperiment from '../snapser-apis/ExperimentsUserExperiment.js';
 
 /**
 * ExperimentsService service.

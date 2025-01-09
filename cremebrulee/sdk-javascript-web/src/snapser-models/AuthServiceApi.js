@@ -12,34 +12,34 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import ApiHttpBody from '../snapser-apis/ApiHttpBody';
-import AuthAnonLoginRequest from '../snapser-apis/AuthAnonLoginRequest';
-import AuthAnonLoginResponse from '../snapser-apis/AuthAnonLoginResponse';
-import AuthAppleLoginRequest from '../snapser-apis/AuthAppleLoginRequest';
-import AuthAppleLoginResponse from '../snapser-apis/AuthAppleLoginResponse';
-import AuthAssociateLoginsRequest from '../snapser-apis/AuthAssociateLoginsRequest';
-import AuthEmailLoginRequest from '../snapser-apis/AuthEmailLoginRequest';
-import AuthEmailLoginResponse from '../snapser-apis/AuthEmailLoginResponse';
-import AuthEpicLoginRequest from '../snapser-apis/AuthEpicLoginRequest';
-import AuthEpicLoginResponse from '../snapser-apis/AuthEpicLoginResponse';
-import AuthFacebookLoginRequest from '../snapser-apis/AuthFacebookLoginRequest';
-import AuthFacebookLoginResponse from '../snapser-apis/AuthFacebookLoginResponse';
-import AuthGetUserIdsByLoginIdsResponse from '../snapser-apis/AuthGetUserIdsByLoginIdsResponse';
-import AuthGoogleLoginRequest from '../snapser-apis/AuthGoogleLoginRequest';
-import AuthGoogleLoginResponse from '../snapser-apis/AuthGoogleLoginResponse';
-import AuthOtpRequest from '../snapser-apis/AuthOtpRequest';
-import AuthRefreshRequest from '../snapser-apis/AuthRefreshRequest';
-import AuthRefreshResponse from '../snapser-apis/AuthRefreshResponse';
-import AuthSteamLoginRequest from '../snapser-apis/AuthSteamLoginRequest';
-import AuthSteamLoginResponse from '../snapser-apis/AuthSteamLoginResponse';
-import AuthSteamOpenIdLoginRequest from '../snapser-apis/AuthSteamOpenIdLoginRequest';
-import AuthSteamSessionTicketLoginRequest from '../snapser-apis/AuthSteamSessionTicketLoginRequest';
-import AuthValidateAppKeyRequest from '../snapser-apis/AuthValidateAppKeyRequest';
-import AuthValidateRequest from '../snapser-apis/AuthValidateRequest';
-import AuthValidateResponse from '../snapser-apis/AuthValidateResponse';
-import AuthXboxLoginRequest from '../snapser-apis/AuthXboxLoginRequest';
-import AuthXboxLoginResponse from '../snapser-apis/AuthXboxLoginResponse';
+import ApiClient from "../ApiClient.js";
+import ApiHttpBody from '../snapser-apis/ApiHttpBody.js';
+import AuthAnonLoginRequest from '../snapser-apis/AuthAnonLoginRequest.js';
+import AuthAnonLoginResponse from '../snapser-apis/AuthAnonLoginResponse.js';
+import AuthAppleLoginRequest from '../snapser-apis/AuthAppleLoginRequest.js';
+import AuthAppleLoginResponse from '../snapser-apis/AuthAppleLoginResponse.js';
+import AuthAssociateLoginsRequest from '../snapser-apis/AuthAssociateLoginsRequest.js';
+import AuthEmailLoginRequest from '../snapser-apis/AuthEmailLoginRequest.js';
+import AuthEmailLoginResponse from '../snapser-apis/AuthEmailLoginResponse.js';
+import AuthEpicLoginRequest from '../snapser-apis/AuthEpicLoginRequest.js';
+import AuthEpicLoginResponse from '../snapser-apis/AuthEpicLoginResponse.js';
+import AuthFacebookLoginRequest from '../snapser-apis/AuthFacebookLoginRequest.js';
+import AuthFacebookLoginResponse from '../snapser-apis/AuthFacebookLoginResponse.js';
+import AuthGetUserIdsByLoginIdsResponse from '../snapser-apis/AuthGetUserIdsByLoginIdsResponse.js';
+import AuthGoogleLoginRequest from '../snapser-apis/AuthGoogleLoginRequest.js';
+import AuthGoogleLoginResponse from '../snapser-apis/AuthGoogleLoginResponse.js';
+import AuthOtpRequest from '../snapser-apis/AuthOtpRequest.js';
+import AuthRefreshRequest from '../snapser-apis/AuthRefreshRequest.js';
+import AuthRefreshResponse from '../snapser-apis/AuthRefreshResponse.js';
+import AuthSteamLoginRequest from '../snapser-apis/AuthSteamLoginRequest.js';
+import AuthSteamLoginResponse from '../snapser-apis/AuthSteamLoginResponse.js';
+import AuthSteamOpenIdLoginRequest from '../snapser-apis/AuthSteamOpenIdLoginRequest.js';
+import AuthSteamSessionTicketLoginRequest from '../snapser-apis/AuthSteamSessionTicketLoginRequest.js';
+import AuthValidateAppKeyRequest from '../snapser-apis/AuthValidateAppKeyRequest.js';
+import AuthValidateRequest from '../snapser-apis/AuthValidateRequest.js';
+import AuthValidateResponse from '../snapser-apis/AuthValidateResponse.js';
+import AuthXboxLoginRequest from '../snapser-apis/AuthXboxLoginRequest.js';
+import AuthXboxLoginResponse from '../snapser-apis/AuthXboxLoginResponse.js';
 
 /**
 * AuthService service.

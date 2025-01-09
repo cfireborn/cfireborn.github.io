@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import AuthLoginTypeType from './AuthLoginTypeType';
+import ApiClient from '../ApiClient.js';
+import AuthLoginTypeType from './AuthLoginTypeType.js';
 
 /**
  * The AuthUser model module.

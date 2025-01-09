@@ -11,9 +11,9 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import LeaderboardsIncrementScoreRequest from './LeaderboardsIncrementScoreRequest';
-import LeaderboardsIncrementScoreResponse from './LeaderboardsIncrementScoreResponse';
+import ApiClient from '../ApiClient.js';
+import LeaderboardsIncrementScoreRequest from './LeaderboardsIncrementScoreRequest.js';
+import LeaderboardsIncrementScoreResponse from './LeaderboardsIncrementScoreResponse.js';
 
 /**
  * The LeaderboardsBatchIncrementScoreSingleResponse model module.

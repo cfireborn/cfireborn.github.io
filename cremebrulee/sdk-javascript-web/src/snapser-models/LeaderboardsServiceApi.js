@@ -12,17 +12,17 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import IncrementScoreRequest from '../snapser-apis/IncrementScoreRequest';
-import LeaderboardsBatchGetScoresResponse from '../snapser-apis/LeaderboardsBatchGetScoresResponse';
-import LeaderboardsBatchIncrementScoreRequest from '../snapser-apis/LeaderboardsBatchIncrementScoreRequest';
-import LeaderboardsBatchIncrementScoreResponse from '../snapser-apis/LeaderboardsBatchIncrementScoreResponse';
-import LeaderboardsBatchSetScoreRequest from '../snapser-apis/LeaderboardsBatchSetScoreRequest';
-import LeaderboardsBatchSetScoreResponse from '../snapser-apis/LeaderboardsBatchSetScoreResponse';
-import LeaderboardsGetScoresResponse from '../snapser-apis/LeaderboardsGetScoresResponse';
-import LeaderboardsIncrementScoreResponse from '../snapser-apis/LeaderboardsIncrementScoreResponse';
-import LeaderboardsSetScoreResponse from '../snapser-apis/LeaderboardsSetScoreResponse';
-import SetScoreRequest from '../snapser-apis/SetScoreRequest';
+import ApiClient from "../ApiClient.js";
+import IncrementScoreRequest from '../snapser-apis/IncrementScoreRequest.js';
+import LeaderboardsBatchGetScoresResponse from '../snapser-apis/LeaderboardsBatchGetScoresResponse.js';
+import LeaderboardsBatchIncrementScoreRequest from '../snapser-apis/LeaderboardsBatchIncrementScoreRequest.js';
+import LeaderboardsBatchIncrementScoreResponse from '../snapser-apis/LeaderboardsBatchIncrementScoreResponse.js';
+import LeaderboardsBatchSetScoreRequest from '../snapser-apis/LeaderboardsBatchSetScoreRequest.js';
+import LeaderboardsBatchSetScoreResponse from '../snapser-apis/LeaderboardsBatchSetScoreResponse.js';
+import LeaderboardsGetScoresResponse from '../snapser-apis/LeaderboardsGetScoresResponse.js';
+import LeaderboardsIncrementScoreResponse from '../snapser-apis/LeaderboardsIncrementScoreResponse.js';
+import LeaderboardsSetScoreResponse from '../snapser-apis/LeaderboardsSetScoreResponse.js';
+import SetScoreRequest from '../snapser-apis/SetScoreRequest.js';
 
 /**
 * LeaderboardsService service.

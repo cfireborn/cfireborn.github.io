@@ -11,9 +11,9 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StorageBatchGetCountersSingleResponse from './StorageBatchGetCountersSingleResponse';
-import StorageUserCounterResponse from './StorageUserCounterResponse';
+import ApiClient from '../ApiClient.js';
+import StorageBatchGetCountersSingleResponse from './StorageBatchGetCountersSingleResponse.js';
+import StorageUserCounterResponse from './StorageUserCounterResponse.js';
 
 /**
  * The StorageBatchGetCountersResponse model module.

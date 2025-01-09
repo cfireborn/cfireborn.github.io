@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StorageIncrementCounterRequest from './StorageIncrementCounterRequest';
+import ApiClient from '../ApiClient.js';
+import StorageIncrementCounterRequest from './StorageIncrementCounterRequest.js';
 
 /**
  * The StorageBatchIncrementCounterRequest model module.

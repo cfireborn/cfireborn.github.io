@@ -12,9 +12,9 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import RemoteConfigGetAppConfigResponse from '../snapser-apis/RemoteConfigGetAppConfigResponse';
-import RemoteConfigGetUserConfigResponse from '../snapser-apis/RemoteConfigGetUserConfigResponse';
+import ApiClient from "../ApiClient.js";
+import RemoteConfigGetAppConfigResponse from '../snapser-apis/RemoteConfigGetAppConfigResponse.js';
+import RemoteConfigGetUserConfigResponse from '../snapser-apis/RemoteConfigGetUserConfigResponse.js';
 
 /**
 * RemoteConfigService service.

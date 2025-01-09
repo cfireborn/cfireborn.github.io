@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StorageBatchSingleReplaceBlobResponse from './StorageBatchSingleReplaceBlobResponse';
+import ApiClient from '../ApiClient.js';
+import StorageBatchSingleReplaceBlobResponse from './StorageBatchSingleReplaceBlobResponse.js';
 
 /**
  * The StorageBatchReplaceBlobResponse model module.

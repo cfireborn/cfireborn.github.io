@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import ExperimentsUserExperiment from './ExperimentsUserExperiment';
+import ApiClient from '../ApiClient.js';
+import ExperimentsUserExperiment from './ExperimentsUserExperiment.js';
 
 /**
  * The ExperimentsGetUserExperimentsResponse model module.

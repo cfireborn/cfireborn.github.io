@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import LeaderboardsTier from './LeaderboardsTier';
+import ApiClient from '../ApiClient.js';
+import LeaderboardsTier from './LeaderboardsTier.js';
 
 /**
  * The LeaderboardsSetScoreResponse model module.

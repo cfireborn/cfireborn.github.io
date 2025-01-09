@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StatisticsSetUserStatisticRequest from './StatisticsSetUserStatisticRequest';
+import ApiClient from '../ApiClient.js';
+import StatisticsSetUserStatisticRequest from './StatisticsSetUserStatisticRequest.js';
 
 /**
  * The StatisticsBatchSetUserStatisticsRequest model module.

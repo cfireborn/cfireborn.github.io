@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StorageReplaceBlobRequest from './StorageReplaceBlobRequest';
+import ApiClient from '../ApiClient.js';
+import StorageReplaceBlobRequest from './StorageReplaceBlobRequest.js';
 
 /**
  * The StorageBatchReplaceBlobRequest model module.

@@ -11,9 +11,9 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import LeaderboardsSetScoreRequest from './LeaderboardsSetScoreRequest';
-import LeaderboardsSetScoreResponse from './LeaderboardsSetScoreResponse';
+import ApiClient from '../ApiClient.js';
+import LeaderboardsSetScoreRequest from './LeaderboardsSetScoreRequest.js';
+import LeaderboardsSetScoreResponse from './LeaderboardsSetScoreResponse.js';
 
 /**
  * The LeaderboardsBatchSetScoreSingleResponse model module.

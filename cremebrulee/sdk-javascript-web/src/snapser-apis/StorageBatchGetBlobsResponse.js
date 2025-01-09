@@ -11,9 +11,9 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StorageBatchGetBlobsSingleResponse from './StorageBatchGetBlobsSingleResponse';
-import StorageUserBlobResponse from './StorageUserBlobResponse';
+import ApiClient from '../ApiClient.js';
+import StorageBatchGetBlobsSingleResponse from './StorageBatchGetBlobsSingleResponse.js';
+import StorageUserBlobResponse from './StorageUserBlobResponse.js';
 
 /**
  * The StorageBatchGetBlobsResponse model module.

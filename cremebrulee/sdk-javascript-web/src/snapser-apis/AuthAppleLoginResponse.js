@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import AuthUser from './AuthUser';
+import ApiClient from '../ApiClient.js';
+import AuthUser from './AuthUser.js';
 
 /**
  * The AuthAppleLoginResponse model module.

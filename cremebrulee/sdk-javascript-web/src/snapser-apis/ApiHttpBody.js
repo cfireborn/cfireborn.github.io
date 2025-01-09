@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import ProtobufAny from './ProtobufAny';
+import ApiClient from '../ApiClient.js';
+import ProtobufAny from './ProtobufAny.js';
 
 /**
  * The ApiHttpBody model module.

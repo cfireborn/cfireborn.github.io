@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import LeaderboardsUserScore from './LeaderboardsUserScore';
+import ApiClient from '../ApiClient.js';
+import LeaderboardsUserScore from './LeaderboardsUserScore.js';
 
 /**
  * The LeaderboardsTieredUserScore model module.

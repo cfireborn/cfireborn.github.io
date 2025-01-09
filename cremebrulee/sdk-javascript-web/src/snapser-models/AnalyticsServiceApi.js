@@ -12,13 +12,13 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import AnalyticsBatchCreateAppEventRequest from '../snapser-apis/AnalyticsBatchCreateAppEventRequest';
-import AnalyticsBatchCreateEventResponse from '../snapser-apis/AnalyticsBatchCreateEventResponse';
-import AnalyticsServerTime from '../snapser-apis/AnalyticsServerTime';
-import AnalyticsServiceBatchCreateUserEventsBody from '../snapser-apis/AnalyticsServiceBatchCreateUserEventsBody';
-import AnalyticsServiceCreateAppEventBody from '../snapser-apis/AnalyticsServiceCreateAppEventBody';
-import AnalyticsServiceCreateUserEventBody from '../snapser-apis/AnalyticsServiceCreateUserEventBody';
+import ApiClient from "../ApiClient.js";
+import AnalyticsBatchCreateAppEventRequest from '../snapser-apis/AnalyticsBatchCreateAppEventRequest.js';
+import AnalyticsBatchCreateEventResponse from '../snapser-apis/AnalyticsBatchCreateEventResponse.js';
+import AnalyticsServerTime from '../snapser-apis/AnalyticsServerTime.js';
+import AnalyticsServiceBatchCreateUserEventsBody from '../snapser-apis/AnalyticsServiceBatchCreateUserEventsBody.js';
+import AnalyticsServiceCreateAppEventBody from '../snapser-apis/AnalyticsServiceCreateAppEventBody.js';
+import AnalyticsServiceCreateUserEventBody from '../snapser-apis/AnalyticsServiceCreateUserEventBody.js';
 
 /**
 * AnalyticsService service.

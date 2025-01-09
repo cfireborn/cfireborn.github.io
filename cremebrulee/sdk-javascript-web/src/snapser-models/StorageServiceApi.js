@@ -12,33 +12,33 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import StorageBatchGetAppendBlobsResponse from '../snapser-apis/StorageBatchGetAppendBlobsResponse';
-import StorageBatchGetBlobsResponse from '../snapser-apis/StorageBatchGetBlobsResponse';
-import StorageBatchGetCountersResponse from '../snapser-apis/StorageBatchGetCountersResponse';
-import StorageBatchIncrementCounterRequest from '../snapser-apis/StorageBatchIncrementCounterRequest';
-import StorageBatchIncrementCounterResponse from '../snapser-apis/StorageBatchIncrementCounterResponse';
-import StorageBatchInsertBlobRequest from '../snapser-apis/StorageBatchInsertBlobRequest';
-import StorageBatchInsertBlobResponse from '../snapser-apis/StorageBatchInsertBlobResponse';
-import StorageBatchReplaceBlobRequest from '../snapser-apis/StorageBatchReplaceBlobRequest';
-import StorageBatchReplaceBlobResponse from '../snapser-apis/StorageBatchReplaceBlobResponse';
-import StorageBatchUpdateAppendBlobRequest from '../snapser-apis/StorageBatchUpdateAppendBlobRequest';
-import StorageBatchUpdateAppendBlobResponse from '../snapser-apis/StorageBatchUpdateAppendBlobResponse';
-import StorageDeleteAppendBlobResponse from '../snapser-apis/StorageDeleteAppendBlobResponse';
-import StorageDeleteBlobResponse from '../snapser-apis/StorageDeleteBlobResponse';
-import StorageGetAppendBlobResponse from '../snapser-apis/StorageGetAppendBlobResponse';
-import StorageGetBlobResponse from '../snapser-apis/StorageGetBlobResponse';
-import StorageGetCasResponse from '../snapser-apis/StorageGetCasResponse';
-import StorageGetCounterResponse from '../snapser-apis/StorageGetCounterResponse';
-import StorageIncrementCounterResponse from '../snapser-apis/StorageIncrementCounterResponse';
-import StorageInsertBlobResponse from '../snapser-apis/StorageInsertBlobResponse';
-import StorageReplaceBlobResponse from '../snapser-apis/StorageReplaceBlobResponse';
-import StorageResetCounterResponse from '../snapser-apis/StorageResetCounterResponse';
-import StorageServiceIncrementCounterBody from '../snapser-apis/StorageServiceIncrementCounterBody';
-import StorageServiceInsertBlobBody from '../snapser-apis/StorageServiceInsertBlobBody';
-import StorageServiceReplaceBlobBody from '../snapser-apis/StorageServiceReplaceBlobBody';
-import StorageServiceUpdateAppendBlobBody from '../snapser-apis/StorageServiceUpdateAppendBlobBody';
-import StorageUpdateAppendBlobResponse from '../snapser-apis/StorageUpdateAppendBlobResponse';
+import ApiClient from "../ApiClient.js";
+import StorageBatchGetAppendBlobsResponse from '../snapser-apis/StorageBatchGetAppendBlobsResponse.js';
+import StorageBatchGetBlobsResponse from '../snapser-apis/StorageBatchGetBlobsResponse.js';
+import StorageBatchGetCountersResponse from '../snapser-apis/StorageBatchGetCountersResponse.js';
+import StorageBatchIncrementCounterRequest from '../snapser-apis/StorageBatchIncrementCounterRequest.js';
+import StorageBatchIncrementCounterResponse from '../snapser-apis/StorageBatchIncrementCounterResponse.js';
+import StorageBatchInsertBlobRequest from '../snapser-apis/StorageBatchInsertBlobRequest.js';
+import StorageBatchInsertBlobResponse from '../snapser-apis/StorageBatchInsertBlobResponse.js';
+import StorageBatchReplaceBlobRequest from '../snapser-apis/StorageBatchReplaceBlobRequest.js';
+import StorageBatchReplaceBlobResponse from '../snapser-apis/StorageBatchReplaceBlobResponse.js';
+import StorageBatchUpdateAppendBlobRequest from '../snapser-apis/StorageBatchUpdateAppendBlobRequest.js';
+import StorageBatchUpdateAppendBlobResponse from '../snapser-apis/StorageBatchUpdateAppendBlobResponse.js';
+import StorageDeleteAppendBlobResponse from '../snapser-apis/StorageDeleteAppendBlobResponse.js';
+import StorageDeleteBlobResponse from '../snapser-apis/StorageDeleteBlobResponse.js';
+import StorageGetAppendBlobResponse from '../snapser-apis/StorageGetAppendBlobResponse.js';
+import StorageGetBlobResponse from '../snapser-apis/StorageGetBlobResponse.js';
+import StorageGetCasResponse from '../snapser-apis/StorageGetCasResponse.js';
+import StorageGetCounterResponse from '../snapser-apis/StorageGetCounterResponse.js';
+import StorageIncrementCounterResponse from '../snapser-apis/StorageIncrementCounterResponse.js';
+import StorageInsertBlobResponse from '../snapser-apis/StorageInsertBlobResponse.js';
+import StorageReplaceBlobResponse from '../snapser-apis/StorageReplaceBlobResponse.js';
+import StorageResetCounterResponse from '../snapser-apis/StorageResetCounterResponse.js';
+import StorageServiceIncrementCounterBody from '../snapser-apis/StorageServiceIncrementCounterBody.js';
+import StorageServiceInsertBlobBody from '../snapser-apis/StorageServiceInsertBlobBody.js';
+import StorageServiceReplaceBlobBody from '../snapser-apis/StorageServiceReplaceBlobBody.js';
+import StorageServiceUpdateAppendBlobBody from '../snapser-apis/StorageServiceUpdateAppendBlobBody.js';
+import StorageUpdateAppendBlobResponse from '../snapser-apis/StorageUpdateAppendBlobResponse.js';
 
 /**
 * StorageService service.

@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StatisticsUserStatistic from './StatisticsUserStatistic';
+import ApiClient from '../ApiClient.js';
+import StatisticsUserStatistic from './StatisticsUserStatistic.js';
 
 /**
  * The StatisticsGetUserStatisticsResponse model module.

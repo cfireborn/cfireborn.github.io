@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import AnalyticsBatchCreateEventSingleResponse from './AnalyticsBatchCreateEventSingleResponse';
+import ApiClient from '../ApiClient.js';
+import AnalyticsBatchCreateEventSingleResponse from './AnalyticsBatchCreateEventSingleResponse.js';
 
 /**
  * The AnalyticsBatchCreateEventResponse model module.

@@ -11,7 +11,7 @@
  *
  */
 
-import ApiClient from '../ApiClient';
+import ApiClient from '../ApiClient.js';
 
 /**
  * The AuthAppleLoginRequest model module.

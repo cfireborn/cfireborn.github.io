@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import StatisticsBatchUpdateUserStatisticsItem from './StatisticsBatchUpdateUserStatisticsItem';
+import ApiClient from '../ApiClient.js';
+import StatisticsBatchUpdateUserStatisticsItem from './StatisticsBatchUpdateUserStatisticsItem.js';
 
 /**
  * The StatisticsServiceBatchUpdateUserStatisticsBody model module.

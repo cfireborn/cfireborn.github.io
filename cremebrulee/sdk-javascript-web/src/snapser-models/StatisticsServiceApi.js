@@ -12,17 +12,17 @@
  */
 
 
-import ApiClient from "../ApiClient";
-import StatisticsBatchGetUserStatisticsResponse from '../snapser-apis/StatisticsBatchGetUserStatisticsResponse';
-import StatisticsBatchSetUserStatisticsRequest from '../snapser-apis/StatisticsBatchSetUserStatisticsRequest';
-import StatisticsBatchSetUserStatisticsResponse from '../snapser-apis/StatisticsBatchSetUserStatisticsResponse';
-import StatisticsBatchUpdateUserStatisticsResponse from '../snapser-apis/StatisticsBatchUpdateUserStatisticsResponse';
-import StatisticsGetUserStatisticsResponse from '../snapser-apis/StatisticsGetUserStatisticsResponse';
-import StatisticsIsUserInSegmentResponse from '../snapser-apis/StatisticsIsUserInSegmentResponse';
-import StatisticsServiceBatchUpdateUserStatisticsBody from '../snapser-apis/StatisticsServiceBatchUpdateUserStatisticsBody';
-import StatisticsServiceIncrementUserStatisticBody from '../snapser-apis/StatisticsServiceIncrementUserStatisticBody';
-import StatisticsServiceSetUserStatisticBody from '../snapser-apis/StatisticsServiceSetUserStatisticBody';
-import StatisticsUserStatistic from '../snapser-apis/StatisticsUserStatistic';
+import ApiClient from "../ApiClient.js";
+import StatisticsBatchGetUserStatisticsResponse from '../snapser-apis/StatisticsBatchGetUserStatisticsResponse.js';
+import StatisticsBatchSetUserStatisticsRequest from '../snapser-apis/StatisticsBatchSetUserStatisticsRequest.js';
+import StatisticsBatchSetUserStatisticsResponse from '../snapser-apis/StatisticsBatchSetUserStatisticsResponse.js';
+import StatisticsBatchUpdateUserStatisticsResponse from '../snapser-apis/StatisticsBatchUpdateUserStatisticsResponse.js';
+import StatisticsGetUserStatisticsResponse from '../snapser-apis/StatisticsGetUserStatisticsResponse.js';
+import StatisticsIsUserInSegmentResponse from '../snapser-apis/StatisticsIsUserInSegmentResponse.js';
+import StatisticsServiceBatchUpdateUserStatisticsBody from '../snapser-apis/StatisticsServiceBatchUpdateUserStatisticsBody.js';
+import StatisticsServiceIncrementUserStatisticBody from '../snapser-apis/StatisticsServiceIncrementUserStatisticBody.js';
+import StatisticsServiceSetUserStatisticBody from '../snapser-apis/StatisticsServiceSetUserStatisticBody.js';
+import StatisticsUserStatistic from '../snapser-apis/StatisticsUserStatistic.js';
 
 /**
 * StatisticsService service.

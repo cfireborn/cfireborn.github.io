@@ -7,9 +7,9 @@ const sdkDir = './sdk-javascript-web/src';
 function addJsExtensions(filePath) {
   let content = fs.readFileSync(filePath, 'utf8');
   
-  // Replace import statements with .js extension
+  // Replace relative imports with .js extension
   content = content.replace(
-    /import .* from ['"](.*?)['"];/g, 
+    /import .* from ['"](\.[^'"]+)['"]/g, 
     (match, importPath) => {
       if (!importPath.endsWith('.js')) {
         return match.replace(importPath, `${importPath}.js`);

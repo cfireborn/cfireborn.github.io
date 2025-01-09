@@ -11,8 +11,8 @@
  *
  */
 
-import ApiClient from '../ApiClient';
-import AnalyticsGenericEvent from './AnalyticsGenericEvent';
+import ApiClient from '../ApiClient.js';
+import AnalyticsGenericEvent from './AnalyticsGenericEvent.js';
 
 /**
  * The AnalyticsBatchCreateAppEventRequest model module.
