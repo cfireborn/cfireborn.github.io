@@ -1,9 +1,10 @@
-import ApiClient from './sdk-javascript-web/src/ApiClient.js';
-import { AuthServiceApi } from './sdk-javascript-web/src/snapser-models/AuthServiceApi.js';
-import { LeaderboardsServiceApi } from './sdk-javascript-web/src/snapser-models/LeaderboardsServiceApi.js';
-import { AuthAnonLoginRequest } from './sdk-javascript-web/src/snapser-apis/AuthAnonLoginRequest.js';
-import { LeaderboardsSetScoreRequest } from './sdk-javascript-web/src/snapser-apis/LeaderboardsSetScoreRequest.js';
-import { IncrementScoreRequest } from './sdk-javascript-web/src/snapser-apis/IncrementScoreRequest.js';
+import ApiClient from './sdk-javascript-web/src/ApiClient.js'; // Assuming ApiClient is a default export
+
+import AuthServiceApi from './sdk-javascript-web/src/snapser-models/AuthServiceApi.js'; // Converted to default import
+import LeaderboardsServiceApi from './sdk-javascript-web/src/snapser-models/LeaderboardsServiceApi.js'; // Converted to default import
+import AuthAnonLoginRequest from './sdk-javascript-web/src/snapser-apis/AuthAnonLoginRequest.js'; // Converted to default import
+import LeaderboardsSetScoreRequest from './sdk-javascript-web/src/snapser-apis/LeaderboardsSetScoreRequest.js'; // Converted to default import
+import IncrementScoreRequest from './sdk-javascript-web/src/snapser-apis/IncrementScoreRequest.js'; // Converted to default import
 
 document.addEventListener("DOMContentLoaded", async () => {
   const bruleeButton = document.getElementById("brulee-button");

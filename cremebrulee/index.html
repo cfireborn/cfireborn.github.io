@@ -43,6 +43,17 @@
       </div>
     </div>
   </div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/superagent/8.0.9/superagent.min.js"></script>
+  <script type="importmap">
+    {
+     "imports": {
+        "superagent": "https://cdnjs.cloudflare.com/ajax/libs/superagent/8.0.9/superagent.min.js",
+        "querystring": "/sdk-javascript-web/src/querystring.js",
+        "../ApiClient": "/sdk-javascript-web/src/ApiClient.js",
+        "../snapser-apis/": "/sdk-javascript-web/src/snapser-apis/"
+      }
+    }
+    </script>
   <script type="module" src="script.js"></script>
   <script>
     document.querySelector('.accordion-button').addEventListener('click', function() {

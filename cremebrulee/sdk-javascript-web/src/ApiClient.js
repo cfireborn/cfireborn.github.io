@@ -12,8 +12,8 @@
  */
 
 
-import superagent from "superagent";
-import querystring from "querystring";
+const superagent = window.superagent;
+import querystring from "./querystring.js";
 
 /**
 * @module ApiClient
@@ -54,7 +54,7 @@ class ApiClient {
          * @default {}
          */
         this.defaultHeaders = {
-            'User-Agent': 'OpenAPI-Generator/cremebrulee: v1 SDK/Javascript'
+            // 'User-Agent': 'OpenAPI-Generator/cremebrulee: v1 SDK/Javascript'
         };
 
         /**
