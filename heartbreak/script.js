@@ -1,4 +1,4 @@
-const PROGRESS = 15; // percent
+let progress = 15; // percent
 
 let currentImagePath = '';
 // July 11, 2025 at midnight UTC
@@ -14,13 +14,18 @@ function updateDaysSinceBreakup() {
 
 function updateProgress() {
   const bar = document.getElementById('progress-bar');
-  bar.style.width = PROGRESS + '%';
+  bar.style.width = progress + '%';
 
   const label = document.getElementById('progress-label');
-  label.textContent = PROGRESS + '/100%';
+  label.textContent = progress + '/100%';
 
   // Update Charlie's image based on healing progress
   updateCharlieImage();
+}
+
+function changeProgress(delta) {
+  progress = Math.min(100, Math.max(0, progress + delta));
+  updateProgress();
 }
 
 function updateCharlieImage() {
@@ -28,7 +33,7 @@ function updateCharlieImage() {
   
   // Use the image randomizer to get appropriate image
   if (typeof getRandomImagePath === 'function') {
-    currentImagePath = getRandomImagePath(PROGRESS);
+    currentImagePath = getRandomImagePath(progress);
     boyImg.src = currentImagePath;
     
     // Add error handling for missing images
@@ -40,9 +45,9 @@ function updateCharlieImage() {
       fallback.style.fontSize = '4rem';
       
       let emoji = '😢';
-      if (PROGRESS >= 75) emoji = '😄';
-      else if (PROGRESS >= 50) emoji = '🙂';
-      else if (PROGRESS >= 25) emoji = '😔';
+      if (progress >= 75) emoji = '😄';
+      else if (progress >= 50) emoji = '🙂';
+      else if (progress >= 25) emoji = '😔';
       fallback.textContent = emoji;
       
       this.parentNode.insertBefore(fallback, this);
@@ -60,9 +65,9 @@ function updateCharlieImage() {
     // Fallback to emoji system if randomizer not available
     boyImg.style.display = 'none';
     let emoji = '😢';
-    if (PROGRESS >= 75) emoji = '😄';
-    else if (PROGRESS >= 50) emoji = '🙂';
-    else if (PROGRESS >= 25) emoji = '😔';
+    if (progress >= 75) emoji = '😄';
+    else if (progress >= 50) emoji = '🙂';
+    else if (progress >= 25) emoji = '😔';
     
     const fallback = document.createElement('div');
     fallback.id = 'boy-emoji-fallback';
@@ -75,7 +80,7 @@ function updateCharlieImage() {
 function shuffleCharlie() {
   // Get the next image in the same stage/style bucket
   if (typeof getNextImageInBucket === 'function') {
-    const nextImagePath = getNextImageInBucket(PROGRESS);
+    const nextImagePath = getNextImageInBucket(progress);
     const boyImg = document.getElementById('boy-image');
     
     // Add a subtle animation during shuffle
@@ -88,7 +93,7 @@ function shuffleCharlie() {
       
       // Log the stage info for debugging
       if (typeof getStageInfo === 'function') {
-        const stageInfo = getStageInfo(PROGRESS);
+        const stageInfo = getStageInfo(progress);
         console.log(`Shuffled to next ${stageInfo.name} stage image: ${nextImagePath}`);
       }
     }, 150);
@@ -194,11 +199,20 @@ function setupButtons() {
       addEntry(btn.getAttribute('data-action'));
     });
   });
-  
+
   // Setup shuffle Charlie button
   const shuffleBtn = document.getElementById('shuffle-charlie');
   if (shuffleBtn) {
     shuffleBtn.addEventListener('click', shuffleCharlie);
+  }
+
+  const increaseBtn = document.getElementById('increase-progress');
+  const decreaseBtn = document.getElementById('decrease-progress');
+  if (increaseBtn) {
+    increaseBtn.addEventListener('click', () => changeProgress(5));
+  }
+  if (decreaseBtn) {
+    decreaseBtn.addEventListener('click', () => changeProgress(-5));
   }
 }
 
