@@ -55,9 +55,50 @@ body {
   to { background-position: 30px 0; }
 }
 
-#boy-image {
-  font-size: 4rem;
+#boy-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 40px;
+  gap: 1rem;
+}
+
+#boy-image {
+  max-width: 200px;
+  max-height: 200px;
+  width: auto;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: opacity 0.3s ease;
+}
+
+#boy-emoji-fallback {
+  font-size: 4rem;
+}
+
+#shuffle-charlie {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 25px;
+  background-color: #FF6B6B;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#shuffle-charlie:hover {
+  background-color: #FF5252;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+#shuffle-charlie:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 #buttons {

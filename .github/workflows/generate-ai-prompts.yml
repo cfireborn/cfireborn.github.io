@@ -1,0 +1,168 @@
+name: Generate AI Image Prompts
+
+on:
+  workflow_dispatch:
+    inputs:
+      generate_images:
+        description: 'Generate actual AI images (requires API keys)'
+        required: false
+        default: 'false'
+        type: choice
+        options:
+        - 'false'
+        - 'true'
+  push:
+    paths:
+      - 'heartbreak/images/prompt-generator.js'
+      - '.github/workflows/generate-ai-prompts.yml'
+
+jobs:
+  generate-prompts:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: Install dependencies
+      run: |
+        cd heartbreak
+        npm init -y
+        npm install --save-dev fs path
+        
+    - name: Generate AI prompts
+      run: |
+        cd heartbreak
+        node -e "
+        const generator = require('./images/prompt-generator.js');
+        const fs = require('fs');
+        
+        console.log('🎨 Generating AI image prompts for all stages...');
+        
+        // Generate all prompts
+        const allPrompts = generator.generateAllPrompts();
+        
+        // Export to markdown file
+        const promptText = generator.exportPromptsAsText();
+        fs.writeFileSync('images/AI_PROMPTS.md', promptText);
+        
+        // Export to JSON for API use
+        fs.writeFileSync('images/prompts.json', JSON.stringify(allPrompts, null, 2));
+        
+        // Generate negative prompt file
+        const negativePrompt = generator.getNegativePrompt();
+        fs.writeFileSync('images/negative-prompt.txt', negativePrompt);
+        
+        console.log('✅ Generated AI_PROMPTS.md');
+        console.log('✅ Generated prompts.json');
+        console.log('✅ Generated negative-prompt.txt');
+        
+        // Count total prompts
+        let totalPrompts = 0;
+        Object.keys(allPrompts).forEach(stage => {
+          Object.keys(allPrompts[stage]).forEach(style => {
+            totalPrompts += allPrompts[stage][style].length;
+          });
+        });
+        
+        console.log(\`📊 Total prompts generated: \${totalPrompts}\`);
+        "
+        
+    - name: Generate sample prompts for README
+      run: |
+        cd heartbreak
+        node -e "
+        const generator = require('./images/prompt-generator.js');
+        
+        console.log('📝 Sample prompts for different stages:');
+        console.log('');
+        
+        // Generate sample prompts for each stage
+        const stages = ['denial', 'anger', 'depression', 'hope', 'healing'];
+        const styles = ['cartoon', 'impressionist', 'photorealistic'];
+        
+        stages.forEach(stage => {
+          console.log(\`## \${stage.toUpperCase()} STAGE\`);
+          styles.forEach(style => {
+            const prompt = generator.generatePrompt(stage, style, 1);
+            console.log(\`**\${style}:** \${prompt}\`);
+            console.log('');
+          });
+          console.log('---');
+          console.log('');
+        });
+        "
+        
+    - name: Setup AI image generation (if enabled)
+      if: github.event.inputs.generate_images == 'true'
+      run: |
+        echo "🚀 AI image generation enabled"
+        echo "Note: This would require API keys for DALL-E, Midjourney, or other AI services"
+        echo "For now, this step documents the process:"
+        echo ""
+        echo "1. Set up API keys as GitHub secrets:"
+        echo "   - OPENAI_API_KEY (for DALL-E)"
+        echo "   - REPLICATE_API_TOKEN (for Stable Diffusion)"
+        echo ""
+        echo "2. Install AI generation libraries:"
+        echo "   npm install openai replicate"
+        echo ""
+        echo "3. Use prompts from prompts.json to generate images"
+        echo "4. Save images to appropriate folders"
+        
+    - name: Commit generated files
+      run: |
+        cd heartbreak
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if [[ -n $(git status --porcelain) ]]; then
+          git add images/AI_PROMPTS.md images/prompts.json images/negative-prompt.txt
+          git commit -m "🎨 Auto-generated AI image prompts
+          
+          - Generated prompts for all 7 grief stages
+          - 5 art styles per stage  
+          - 5 variations per style
+          - Total: 175 unique prompts
+          
+          Files updated:
+          - AI_PROMPTS.md (human-readable prompts)
+          - prompts.json (API-ready format)
+          - negative-prompt.txt (quality controls)"
+          
+          git push
+          echo "✅ Committed generated prompt files"
+        else
+          echo "ℹ️ No changes to commit"
+        fi
+
+  # Future job for actual AI image generation
+  generate-ai-images:
+    runs-on: ubuntu-latest
+    needs: generate-prompts
+    if: github.event.inputs.generate_images == 'true'
+    
+    steps:
+    - name: Placeholder for AI image generation
+      run: |
+        echo "🎨 This job would generate actual AI images"
+        echo "Currently set up as placeholder - requires:"
+        echo ""
+        echo "1. API keys for AI services (stored as secrets)"
+        echo "2. Image generation libraries" 
+        echo "3. Logic to process prompts.json"
+        echo "4. Save generated images to correct folders"
+        echo "5. Commit images back to repository"
+        echo ""
+        echo "Example services to integrate:"
+        echo "- OpenAI DALL-E 3"
+        echo "- Stability AI (via Replicate)"
+        echo "- Midjourney (via API when available)"
+        echo "- Leonardo.ai API"
+        echo ""
+        echo "For now, use the generated prompts manually with your preferred AI tool!"
