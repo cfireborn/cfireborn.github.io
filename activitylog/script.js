@@ -54,6 +54,7 @@ const blurbs = {
 
 let db;
 let userLocation = null;
+const useServer = typeof logServerUrl !== 'undefined' && logServerUrl;
 
 // Initialize Firebase if config is provided
 if (typeof firebaseConfig !== 'undefined') {
@@ -92,8 +93,14 @@ function addEntry(action) {
   // Immediately show locally
   renderEntry(entry);
 
-  // Store remotely if firebase is configured
-  if (db) {
+  // Store remotely
+  if (useServer) {
+    fetch(logServerUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry)
+    }).catch(console.error);
+  } else if (db) {
     db.collection('activitylog').add(entry).catch(console.error);
   }
 }

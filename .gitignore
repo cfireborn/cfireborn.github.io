@@ -84,3 +84,6 @@ test/*.js
 cremebrulee/.DS_Store
 .DS_Store
 activitylog/firebaseConfig.js
+
+logserver/serviceAccountKey.json
+activitylog/serverConfig.js

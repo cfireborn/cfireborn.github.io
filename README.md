@@ -15,6 +15,20 @@ Firebase Firestore database. Copy `activitylog/firebaseConfig.example.js` to
 See the comments in that file for the required fields. When configured, each
 client will push entries to Firestore and display updates in real time.
 
+If you prefer not to expose Firebase client credentials, a small Node
+server using the `firebase-admin` SDK is provided under `logserver/`.
+Copy `logserver/serviceAccountKey.example.json` to
+`logserver/serviceAccountKey.json` and fill it with your Firebase service
+account credentials. Start the server with `npm install` and `node index.js`
+from that directory. Then copy `activitylog/serverConfig.example.js` to
+`activitylog/serverConfig.js` and set `logServerUrl` to the deployed server's
+`/log` endpoint. The browser script will POST log entries to this server,
+which stores them in Firestore using the admin SDK.
+
+To keep your credentials secret on GitHub, add the JSON contents as a
+repository secret named `FIREBASE_SERVICE_ACCOUNT` and run the server in a
+host that loads this environment variable.
+
 ## Development
 
 Simply edit the files in place and open `index.html` or any of the
