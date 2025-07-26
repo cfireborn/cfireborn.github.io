@@ -67,7 +67,7 @@ h1#title {
 
 #progress-controls {
   position: fixed;
-  top: 25px;
+  top: 50px;
   left: 0;
   width: 100%;
   display: flex;
@@ -87,6 +87,34 @@ h1#title {
 
 #progress-controls button:hover {
   background-color: #5a6268;
+}
+
+#progress-markers {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  margin-top: 4px;
+  height: 20px;
+  pointer-events: none;
+}
+
+#progress-markers .marker {
+  position: absolute;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.6rem;
+  color: #333;
+  white-space: nowrap;
+}
+
+#progress-markers .marker .line {
+  width: 1px;
+  height: 6px;
+  background: #333;
+  margin-bottom: 2px;
 }
 
 @keyframes barberpole {
