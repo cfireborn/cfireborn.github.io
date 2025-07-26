@@ -31,4 +31,4 @@ jobs:
           preview: ${{ github.event_name == 'pull_request' }}
       - name: Log preview URL
         if: github.event_name == 'pull_request'
-        run: echo "Preview URL: ${{ steps.deploy.outputs.page_url }}"
+        run: "echo \"Preview URL: ${{ steps.deploy.outputs.page_url }}\""
