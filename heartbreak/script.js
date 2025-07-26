@@ -216,8 +216,35 @@ function setupButtons() {
   }
 }
 
+function createProgressMarkers() {
+  if (typeof HEALING_STAGES === 'undefined') return;
+
+  const wrapper = document.getElementById('progress-wrapper');
+  if (!wrapper) return;
+
+  const container = document.createElement('div');
+  container.id = 'progress-markers';
+  wrapper.appendChild(container);
+
+  HEALING_STAGES.forEach(stage => {
+    const marker = document.createElement('div');
+    marker.className = 'marker';
+    marker.style.left = stage.minHealing + '%';
+
+    const line = document.createElement('div');
+    line.className = 'line';
+    const label = document.createElement('span');
+    label.textContent = stage.name;
+
+    marker.appendChild(line);
+    marker.appendChild(label);
+    container.appendChild(marker);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
   updateDaysSinceBreakup();
   setupButtons();
+  createProgressMarkers();
 });
