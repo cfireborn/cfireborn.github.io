@@ -4,6 +4,9 @@ function updateProgress() {
   const bar = document.getElementById('progress-bar');
   bar.style.width = PROGRESS + '%';
 
+  const label = document.getElementById('progress-label');
+  label.textContent = PROGRESS + '/100%';
+
   const boy = document.getElementById('boy-image');
   let emoji = '😢';
   if (PROGRESS >= 75) emoji = '😄';
