@@ -1,6 +1,15 @@
 const PROGRESS = 15; // percent
 
 let currentImagePath = '';
+const breakupDate = new Date('2023-07-11');
+
+function updateDaysSinceBreakup() {
+  const span = document.getElementById('days-since');
+  if (!span) return;
+  const diffMs = Date.now() - breakupDate.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+  span.textContent = diffDays;
+}
 
 function updateProgress() {
   const bar = document.getElementById('progress-bar');
@@ -194,5 +203,6 @@ function setupButtons() {
 
 document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
+  updateDaysSinceBreakup();
   setupButtons();
 });
