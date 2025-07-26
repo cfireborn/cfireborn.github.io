@@ -65,6 +65,30 @@ h1#title {
   animation: barberpole 1s linear infinite;
 }
 
+#progress-controls {
+  position: fixed;
+  top: 25px;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+#progress-controls button {
+  padding: 0.2rem 0.6rem;
+  border: none;
+  border-radius: 5px;
+  background-color: #6c757d;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+#progress-controls button:hover {
+  background-color: #5a6268;
+}
+
 @keyframes barberpole {
   from { background-position: 0 0; }
   to { background-position: 30px 0; }
