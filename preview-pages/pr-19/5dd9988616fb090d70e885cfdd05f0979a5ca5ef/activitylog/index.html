@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Activity Log</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    #actions button {
+      margin: 4px;
+    }
+    #log {
+      max-height: 300px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      padding: 10px;
+      margin-top: 20px;
+    }
+    .entry {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #aaa;
+    }
+  </style>
+</head>
+<body>
+  <h1>Activity Log</h1>
+  <div id="actions">
+    <button data-action="exercise">Exercise</button>
+    <button data-action="eat">Eat Food</button>
+    <button data-action="work">Work</button>
+    <button data-action="play">Play Games</button>
+    <button data-action="read">Read Books</button>
+    <button data-action="meditate">Meditate</button>
+    <button data-action="shop">Shop</button>
+    <button data-action="cook">Cook</button>
+    <button data-action="travel">Travel</button>
+    <button data-action="sleep">Sleep</button>
+  </div>
+
+  <div id="log"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
