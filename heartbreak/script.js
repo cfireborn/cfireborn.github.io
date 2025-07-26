@@ -95,11 +95,93 @@ function spawnEmoji(emoji) {
   setTimeout(() => span.remove(), 3000);
 }
 
+const blurbs = {
+  exercise: [
+    "Pushed through a tough workout and felt stronger afterward.",
+    "Sweated it out with a fast run around the block.",
+    "Tried a new yoga flow and found some peace.",
+    "Hit the gym and left all frustration on the weights."
+  ],
+  write: [
+    "Poured raw feelings into the page, no filter needed.",
+    "Crafted another letter I'll probably never send.",
+    "Free writing session brought unexpected clarity.",
+    "Jotted down memories to get them out of my head."
+  ],
+  therapy: [
+    "Therapist dropped a truth bomb that actually helped.",
+    "Shared fears openly and felt lighter walking out.",
+    "Made progress unpacking the messy bits.",
+    "Another hour of hard but healing conversation."
+  ],
+  eat: [
+    "Cooked a hearty meal that warmed the soul.",
+    "Grabbed comfort food and felt cared for.",
+    "Treated myself to a fancy dessert—sweet relief.",
+    "Healthy snack gave a small burst of energy."
+  ],
+  friends: [
+    "Laughed with friends until my sides hurt.",
+    "Got a much-needed hug from a close buddy.",
+    "Shared stories over dinner with trusted pals.",
+    "Game night with friends kept my mind off things."
+  ],
+  meet: [
+    "Chatted with a stranger and felt a spark of hope.",
+    "Made a new acquaintance who shared some wisdom.",
+    "Introduced myself at a meetup—small steps forward.",
+    "Had a genuine conversation with someone new."
+  ],
+  family: [
+    "Family dinner reminded me I'm not alone.",
+    "Opened up about heartache with a sibling.",
+    "Watched a movie with family, cozy and safe.",
+    "Got some tough love but felt supported."
+  ],
+  travel: [
+    "Daydreamed about future adventures while planning a trip.",
+    "Explored a nearby town and found a hidden gem.",
+    "Booked tickets for a solo getaway—nervous but excited.",
+    "Took a scenic drive and let the wind clear my head."
+  ],
+  learn: [
+    "Watched an inspiring tutorial and learned a new trick.",
+    "Signed up for an online course to keep busy.",
+    "Read an article that sparked new curiosity.",
+    "Practiced a skill and felt myself improve."
+  ],
+  cry: [
+    "Let tears flow freely with my favorite sad playlist.",
+    "Had a good cry and felt a bit lighter afterward.",
+    "Journaled through the pain and the tears came easily.",
+    "Shared a cry with a friend who understood."
+  ],
+  sleep: [
+    "Finally got a full night of deep rest.",
+    "Took a quick nap and woke up refreshed.",
+    "Dreams were weird but at least I slept.",
+    "Early bedtime was exactly what I needed."
+  ]
+};
+
+function addEntry(action) {
+  const messages = blurbs[action];
+  if (!messages) return;
+  const message = messages[Math.floor(Math.random() * messages.length)];
+  const log = document.getElementById('log');
+  const div = document.createElement('div');
+  div.className = 'entry';
+  const now = new Date().toLocaleTimeString();
+  div.textContent = `[${now}] ${message}`;
+  log.insertBefore(div, log.firstChild);
+}
+
 function setupButtons() {
   // Setup healing activity buttons
   document.querySelectorAll('#buttons button').forEach(btn => {
     btn.addEventListener('click', () => {
       spawnEmoji(btn.getAttribute('data-emoji'));
+      addEntry(btn.getAttribute('data-action'));
     });
   });
   
