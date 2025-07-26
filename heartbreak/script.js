@@ -1,7 +1,8 @@
 const PROGRESS = 15; // percent
 
 let currentImagePath = '';
-const breakupDate = new Date('2023-07-11');
+// July 11, 2025 at midnight UTC
+const breakupDate = new Date('2025-07-11T00:00:00Z');
 
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
