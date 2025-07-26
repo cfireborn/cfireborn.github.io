@@ -63,23 +63,23 @@ function updateCharlieImage() {
 }
 
 function shuffleCharlie() {
-  // Get a new random image for the current healing stage
-  if (typeof getRandomImagePath === 'function') {
-    const newImagePath = getRandomImagePath(PROGRESS);
+  // Get the next image in the same stage/style bucket
+  if (typeof getNextImageInBucket === 'function') {
+    const nextImagePath = getNextImageInBucket(PROGRESS);
     const boyImg = document.getElementById('boy-image');
     
     // Add a subtle animation during shuffle
     boyImg.style.opacity = '0.5';
     
     setTimeout(() => {
-      boyImg.src = newImagePath;
-      currentImagePath = newImagePath;
+      boyImg.src = nextImagePath;
+      currentImagePath = nextImagePath;
       boyImg.style.opacity = '1';
       
       // Log the stage info for debugging
       if (typeof getStageInfo === 'function') {
         const stageInfo = getStageInfo(PROGRESS);
-        console.log(`Shuffled to new ${stageInfo.name} stage image: ${newImagePath}`);
+        console.log(`Shuffled to next ${stageInfo.name} stage image: ${nextImagePath}`);
       }
     }, 150);
   }

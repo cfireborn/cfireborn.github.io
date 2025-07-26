@@ -22,6 +22,14 @@ const ART_STYLES = [
   "photorealistic"
 ];
 
+// Track current image state for shuffling
+let currentImageState = {
+  stageFolder: null,
+  artStyle: null,
+  imageNumber: 1,
+  maxImages: 5
+};
+
 /**
  * Get the appropriate stage folder based on healing percentage
  * @param {number} healingPercentage - Percentage of healing (0-100)
@@ -60,8 +68,41 @@ function getRandomImagePath(healingPercentage, forceStyle = null, imageNumber = 
   const artStyle = forceStyle || getRandomArtStyle();
   const imgNum = imageNumber || Math.floor(Math.random() * 5) + 1; // Assuming 5 images per style
   
-  // Format: images/stage-X-name/style/filename
-  return `images/${stageFolder}/${artStyle}/${stageFolder}_${artStyle}_${imgNum.toString().padStart(2, '0')}.png`;
+  // Update current state when generating new path
+  currentImageState.stageFolder = stageFolder;
+  currentImageState.artStyle = artStyle;
+  currentImageState.imageNumber = imgNum;
+  
+  // Extract stage name from folder for filename
+  const stageName = stageFolder.split('-').slice(2).join('-'); // Remove "stage-X-" prefix
+  
+  // Format: images/stage-X-name/style/filename.svg
+  return `images/${stageFolder}/${artStyle}/${stageName}_${artStyle}_${imgNum.toString().padStart(2, '0')}.svg`;
+}
+
+/**
+ * Get next image in the same stage/style bucket for shuffling
+ * @param {number} healingPercentage - Percentage of healing (0-100)
+ * @returns {string} Next image file path in the same bucket
+ */
+function getNextImageInBucket(healingPercentage) {
+  const stageFolder = getStageForHealing(healingPercentage);
+  
+  // If stage changed, reset to random style and image 1
+  if (currentImageState.stageFolder !== stageFolder) {
+    currentImageState.stageFolder = stageFolder;
+    currentImageState.artStyle = getRandomArtStyle();
+    currentImageState.imageNumber = 1;
+  } else {
+    // Same stage, cycle to next image in current style
+    currentImageState.imageNumber = (currentImageState.imageNumber % currentImageState.maxImages) + 1;
+  }
+  
+  // Extract stage name from folder for filename
+  const stageName = stageFolder.split('-').slice(2).join('-'); // Remove "stage-X-" prefix
+  
+  // Format: images/stage-X-name/style/filename.svg
+  return `images/${stageFolder}/${currentImageState.artStyle}/${stageName}_${currentImageState.artStyle}_${currentImageState.imageNumber.toString().padStart(2, '0')}.svg`;
 }
 
 /**
@@ -126,11 +167,12 @@ function preloadAdjacentImages(healingPercentage) {
  */
 function getAllImagesForStage(healingPercentage) {
   const stageFolder = getStageForHealing(healingPercentage);
+  const stageName = stageFolder.split('-').slice(2).join('-'); // Remove "stage-X-" prefix
   const allImages = [];
   
   ART_STYLES.forEach(style => {
     for (let i = 1; i <= 5; i++) { // Assuming 5 images per style
-      allImages.push(`images/${stageFolder}/${style}/${stageFolder}_${style}_${i.toString().padStart(2, '0')}.png`);
+      allImages.push(`images/${stageFolder}/${style}/${stageName}_${style}_${i.toString().padStart(2, '0')}.svg`);
     }
   });
   
@@ -146,6 +188,7 @@ function getAllImagesForStage(healingPercentage) {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     getRandomImagePath,
+    getNextImageInBucket,
     displayRandomImage,
     getStageInfo,
     getAllImagesForStage,
