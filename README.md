@@ -16,7 +16,9 @@ subfolders' `index.html` in a browser to test locally.
 
 ## Previewing Pull Requests
 
-A GitHub Actions workflow automatically deploys previews for every pull
-request. Once you open a PR, the "Deploy static site to GitHub Pages"
-check will provide a URL where you can view the proposed changes.
-The build logs also print this preview URL after deployment for quick access.
+This repository uses the [preview-pages](https://github.com/rajyan/preview-pages)
+action to automatically deploy a preview of each pull request. A comment with
+the preview link is added to the PR and the workflow logs print the same URL.
+Previews are hosted under
+`https://cfireborn.github.io/preview-pages/pr-<number>/` so you can review the
+changes before merging.

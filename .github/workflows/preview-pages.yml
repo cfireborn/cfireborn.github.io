@@ -1,0 +1,37 @@
+name: Preview Pages for PRs
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+permissions:
+  pull-requests: write
+  contents: write
+
+concurrency:
+  group: preview-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy preview
+        id: preview
+        uses: rajyan/preview-pages@v1
+        with:
+          source-dir: .
+          git-config-name: cfireborn
+          git-config-email: cfireborn@users.noreply.github.com
+          target-repository: cfireborn/cfireborn.github.io
+          target-branch: gh-pages
+          target-dir: preview-pages
+
+      - name: Log preview URL
+        run: |
+          echo "Preview URL: https://${{ steps.preview.outputs.pages-url }}"
