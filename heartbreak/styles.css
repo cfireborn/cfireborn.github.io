@@ -94,3 +94,20 @@ body {
   from { transform: translateY(0); opacity: 1; }
   to { transform: translateY(-150px); opacity: 0; }
 }
+
+#log {
+  max-height: 250px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 600px;
+}
+
+.entry {
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px dashed #aaa;
+  font-size: 0.9rem;
+}
