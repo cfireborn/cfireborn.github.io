@@ -1,3 +1,4 @@
+// Random messages for each action
 const blurbs = {
   exercise: [
     "Feels good, nice rock climb with new climbing partners.",
@@ -51,15 +52,62 @@ const blurbs = {
   ]
 };
 
-function addEntry(action) {
-  const messages = blurbs[action];
-  const message = messages[Math.floor(Math.random() * messages.length)];
+let db;
+let userLocation = null;
+
+// Initialize Firebase if config is provided
+if (typeof firebaseConfig !== 'undefined') {
+  const app = firebase.initializeApp(firebaseConfig);
+  db = firebase.firestore();
+}
+
+// Attempt to get user location
+if ('geolocation' in navigator) {
+  navigator.geolocation.getCurrentPosition(pos => {
+    const { latitude, longitude } = pos.coords;
+    userLocation = `${latitude.toFixed(2)},${longitude.toFixed(2)}`;
+  });
+}
+
+function renderEntry(data) {
   const log = document.getElementById('log');
   const div = document.createElement('div');
   div.className = 'entry';
-  const now = new Date().toLocaleTimeString();
-  div.textContent = `[${now}] ${action}: ${message}`;
+  const time = new Date(data.timestamp).toLocaleTimeString();
+  const location = data.location ? ` (${data.location})` : '';
+  div.textContent = `[${time}] ${data.action}: ${data.message}${location}`;
   log.insertBefore(div, log.firstChild);
+}
+
+function addEntry(action) {
+  const messages = blurbs[action];
+  const message = messages[Math.floor(Math.random() * messages.length)];
+  const entry = {
+    action,
+    message,
+    timestamp: Date.now(),
+    location: userLocation
+  };
+
+  // Immediately show locally
+  renderEntry(entry);
+
+  // Store remotely if firebase is configured
+  if (db) {
+    db.collection('activitylog').add(entry).catch(console.error);
+  }
+}
+
+// Listen for changes from firestore
+if (db) {
+  db.collection('activitylog')
+    .orderBy('timestamp', 'desc')
+    .limit(50)
+    .onSnapshot(snapshot => {
+      const log = document.getElementById('log');
+      log.innerHTML = '';
+      snapshot.forEach(doc => renderEntry(doc.data()));
+    });
 }
 
 document.getElementById('actions').addEventListener('click', (e) => {
