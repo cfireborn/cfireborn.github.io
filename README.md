@@ -19,3 +19,4 @@ subfolders' `index.html` in a browser to test locally.
 A GitHub Actions workflow automatically deploys previews for every pull
 request. Once you open a PR, the "Deploy static site to GitHub Pages"
 check will provide a URL where you can view the proposed changes.
+The build logs also print this preview URL after deployment for quick access.
