@@ -197,6 +197,7 @@ function setupButtons() {
     btn.addEventListener('click', () => {
       spawnEmoji(btn.getAttribute('data-emoji'));
       addEntry(btn.getAttribute('data-action'));
+      changeProgress(1);
     });
   });
 
