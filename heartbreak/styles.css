@@ -87,7 +87,7 @@ h1#title {
 
 #progress-controls {
   position: fixed;
-  top: 85px;
+  top: 100px;
   left: 0;
   width: 100%;
   display: flex;
