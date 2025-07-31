@@ -78,23 +78,23 @@ function updateCharlieImage() {
 }
 
 function shuffleCharlie() {
-  // Get the next image in the same stage/style bucket
-  if (typeof getNextImageInBucket === 'function') {
-    const nextImagePath = getNextImageInBucket(progress);
+  // Pick a new random image for the current stage
+  if (typeof getRandomImagePath === 'function') {
+    const nextImagePath = getRandomImagePath(progress);
     const boyImg = document.getElementById('boy-image');
-    
+
     // Add a subtle animation during shuffle
     boyImg.style.opacity = '0.5';
-    
+
     setTimeout(() => {
       boyImg.src = nextImagePath;
       currentImagePath = nextImagePath;
       boyImg.style.opacity = '1';
-      
+
       // Log the stage info for debugging
       if (typeof getStageInfo === 'function') {
         const stageInfo = getStageInfo(progress);
-        console.log(`Shuffled to next ${stageInfo.name} stage image: ${nextImagePath}`);
+        console.log(`Shuffled to new ${stageInfo.name} style image: ${nextImagePath}`);
       }
     }, 150);
   }
