@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Game</title>
+  <link rel="icon" href="favicon.ico" type="image/x-icon"/>
+  <script type="text/javascript" src="phaser.min.js"></script>
+  <script type="text/javascript" src="game.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #ffffff;
+      color: #000000;
+    }
+    body.dark {
+      background: #111111;
+      color: #eeeeee;
+    }
+    #mode-toggle {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 6px 8px;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+      background: #eeeeee;
+      color: #000000;
+    }
+    body.dark #mode-toggle {
+      background: #333333;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <button id="mode-toggle"></button>
+  <h1>StarDodge</h1>
+  <script>
+    const toggle = document.getElementById('mode-toggle');
+    function setButtonIcon() {
+      toggle.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+    }
+    function toggleMode() {
+      document.body.classList.toggle('dark');
+      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+      setButtonIcon();
+    }
+    toggle.addEventListener('click', toggleMode);
+    if (localStorage.getItem('theme') === 'dark') {
+      document.body.classList.add('dark');
+    }
+    setButtonIcon();
+  </script>
+</body>
+</html>
