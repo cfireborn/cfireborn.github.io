@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heartbreak Healing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <button id="mode-toggle" aria-label="Toggle dark mode">💡</button>
+  <div id="flavor-note">NEW: wrote important no-send letter on a plane and did some intense breakthwork. And a therapy worksheet. 15%->50%. From Anger to Depression! Yay! I'm depressed</div>
+  <h1 id="title">Charlie's Heartbreak Healing Progress</h1>
+  <p id="project-blurb">Charlie broke up with his partner on July 11, 2025, <span id="days-since"></span> days ago. Track how he's doing by checking in on this page. Press buttons to suggest what he should do to keep on healing. Look at images highly representative of his current mood and state. Text him how to improve this project.</p>
+  <div id="progress-wrapper">
+    <div id="progress-bar"></div>
+    <div id="progress-label"></div>
+  </div>
+  <div id="phase-markers">
+    <span class="phase" style="left:0%">0%<br>Denial</span>
+    <span class="phase" style="left:15%">15%<br>Anger</span>
+    <span class="phase" style="left:30%">30%<br>Bargaining</span>
+    <span class="phase" style="left:45%">45%<br>Depression</span>
+    <span class="phase" style="left:60%">60%<br>Acceptance</span>
+    <span class="phase" style="left:75%">75%<br>Hope</span>
+    <span class="phase" style="left:90%">90%<br>Healing</span>
+    <span class="phase" style="left:100%">100%<br>Healed</span>
+  </div>
+  <div id="progress-controls">
+    <button id="decrease-progress" aria-label="Decrease progress">-5%</button>
+    <button id="increase-progress" aria-label="Increase progress">+5%</button>
+  </div>
+  
+  <div id="boy-container">
+    <img id="boy-image" src="" alt="Charlie's healing journey" aria-label="healing status">
+    <button id="shuffle-charlie" title="Shuffle Charlie's appearance">🎲 Shuffle Charlie</button>
+  </div>
+
+    <div id="buttons">
+      <button data-emoji="💪" data-action="exercise">💪 Exercise</button>
+      <button data-emoji="📝" data-action="write">
+        📝 Write no-send letters
+      </button>
+      <button data-emoji="🧠" data-action="therapy">
+        🧠 Go to therapy (the good poly-informed one)
+      </button>
+      <button data-emoji="🍲" data-action="eat">🍲 Eat food</button>
+      <button data-emoji="🧑‍🤝‍🧑" data-action="friends">
+        🧑‍🤝‍🧑 Spend time with friends
+      </button>
+      <button data-emoji="🤝" data-action="meet">
+        🤝 Get to know other new people
+      </button>
+      <button data-emoji="👪" data-action="family">
+        👪 Spend time with family
+      </button>
+      <button data-emoji="✈️" data-action="travel">✈️ Travel (solo?)</button>
+      <button data-emoji="📚" data-action="learn">
+        📚 Learn something new
+      </button>
+      <button data-emoji="😭" data-action="cry">
+        😭 Cry (with sad music?) and mourn
+      </button>
+      <button data-emoji="😴" data-action="sleep">😴 Get good sleep</button>
+    </div>
+
+    <script src="imageRandomizer.js"></script>
+    <div id="log" aria-live="polite"></div>
+    <script src="script.js"></script>
+
+    <div id="patch-notes">
+      <h2>Patch Notes</h2>
+      <ul>
+        <li>
+          Patch notes <strong>1.1.4</strong> - added patch notes.
+        </li>
+        <li>
+          Patch notes <strong>1.1.3</strong> - added dark mode toggle to top right.
+        </li>
+        <li>
+          Patch notes <strong>1.1.2</strong> - moved the progress control
+          buttons lower on the page to improve spacing.
+        </li>
+        <li>
+          Patch notes <strong>1.1.1</strong> - repositioned the flavor note and
+          added a subtle shadow for readability.
+        </li>
+        <li>
+          Patch notes <strong>1.1.0</strong> - raised baseline healing from 15%
+          to 50%, introduced pulsing flavor text, and placed the progress bar
+          beneath the mood markers.
+        </li>
+        <li>
+          Patch notes <strong>1.0.12</strong> - enabled the shuffle button to
+          choose a random art style.
+        </li>
+        <li>
+          Patch notes <strong>1.0.11</strong> - increased the healing progress
+          awarded for each activity.
+        </li>
+        <li>
+          Patch notes <strong>1.0.10</strong> - refined progress markers and
+          adjusted title spacing for clarity.
+        </li>
+        <li>
+          Patch notes <strong>1.0.9</strong> - added vertical phase markers and
+          repositioned the controls.
+        </li>
+        <li>
+          Patch notes <strong>1.0.8</strong> - introduced buttons for manually
+          adjusting progress.
+        </li>
+        <li>
+          Patch notes <strong>1.0.7</strong> - calculated the days elapsed since
+          July 11, 2025.
+        </li>
+        <li>
+          Patch notes <strong>1.0.6</strong> - added a page header and an
+          explanatory context blurb.
+        </li>
+        <li>
+          Patch notes <strong>1.0.5</strong> - implemented image shuffling while
+          maintaining stage and style consistency.
+        </li>
+        <li>
+          Patch notes <strong>1.0.4</strong> - integrated an activity log to
+          track actions.
+        </li>
+        <li>
+          Patch notes <strong>1.0.3</strong> - introduced a dynamic Charlie
+          image system with randomizer and shuffle.
+        </li>
+        <li>
+          Patch notes <strong>1.0.2</strong> - added an image randomizer with
+          prompts and configuration for healing stages.
+        </li>
+        <li>
+          Patch notes <strong>1.0.1</strong> - added a progress label to display
+          the current healing percentage.
+        </li>
+        <li>
+          Patch notes <strong>1.0.0</strong> - established the heartbreak
+          healing page with a progress bar and emoji buttons.
+        </li>
+        <li>
+          Patch notes <strong>0.0.0</strong> - created the initial page
+          framework without information.
+        </li>
+      </ul>
+    </div>
+  </body>
+</html>
