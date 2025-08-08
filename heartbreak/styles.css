@@ -11,7 +11,64 @@ body {
   flex-direction: column;
   align-items: center;
   background-color: #f4f4f9;
+  color: #000;
   position: relative;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+#mode-toggle {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  padding: 6px 8px;
+  border: none;
+  border-radius: 4px;
+  background: #eeeeee;
+  color: #000;
+  cursor: pointer;
+}
+
+body.dark #mode-toggle {
+  background: #333;
+  color: #fff;
+}
+
+body.dark #project-blurb {
+  color: #ccc;
+}
+
+body.dark #progress-wrapper {
+  background: #333;
+}
+
+body.dark #progress-controls button {
+  background-color: #444;
+  color: #f4f4f9;
+}
+
+body.dark #progress-controls button:hover {
+  background-color: #555;
+}
+
+body.dark #buttons button {
+  background-color: #0056b3;
+}
+
+body.dark #buttons button:hover {
+  background-color: #004494;
+}
+
+body.dark #log {
+  border-color: #555;
+}
+
+body.dark .entry {
+  border-bottom-color: #666;
 }
 
 h1#title {
