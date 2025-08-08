@@ -1,47 +1,40 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Heartbreak Healing</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <div id="flavor-note">
-      NEW: wrote important no-send letter on a plane and did some intense
-      breakthwork. And a therapy worksheet. 15%->50%. From Anger to Depression!
-      Yay! I'm depressed
-    </div>
-    <h1 id="title">Charlie's Heartbreak Healing Progress</h1>
-    <p id="project-blurb">
-      Charlie broke up with his partner on July 11, 2025,
-      <span id="days-since"></span> days ago. Track how he's doing by checking
-      in on this page. Press buttons to suggest what he should do to keep on
-      healing. Look at images highly representative of his current mood and
-      state. Text him how to improve this project.
-    </p>
-    <div id="progress-wrapper">
-      <div id="progress-bar"></div>
-      <div id="progress-label"></div>
-    </div>
-    <div id="phase-markers">
-      <span class="phase" style="left: 0%">0%<br />Denial</span>
-      <span class="phase" style="left: 15%">15%<br />Anger</span>
-      <span class="phase" style="left: 30%">30%<br />Bargaining</span>
-      <span class="phase" style="left: 45%">45%<br />Depression</span>
-      <span class="phase" style="left: 60%">60%<br />Acceptance</span>
-      <span class="phase" style="left: 75%">75%<br />Hope</span>
-      <span class="phase" style="left: 90%">90%<br />Healing</span>
-      <span class="phase" style="left: 100%">100%<br />Healed</span>
-    </div>
-    <div id="progress-controls">
-      <button id="decrease-progress" aria-label="Decrease progress">-5%</button>
-      <button id="increase-progress" aria-label="Increase progress">+5%</button>
-    </div>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heartbreak Healing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <button id="mode-toggle" aria-label="Toggle dark mode">💡</button>
+  <div id="flavor-note">NEW: wrote important no-send letter on a plane and did some intense breakthwork. And a therapy worksheet. 15%->50%. From Anger to Depression! Yay! I'm depressed</div>
+  <h1 id="title">Charlie's Heartbreak Healing Progress</h1>
+  <p id="project-blurb">Charlie broke up with his partner on July 11, 2025, <span id="days-since"></span> days ago. Track how he's doing by checking in on this page. Press buttons to suggest what he should do to keep on healing. Look at images highly representative of his current mood and state. Text him how to improve this project.</p>
+  <div id="progress-wrapper">
+    <div id="progress-bar"></div>
+    <div id="progress-label"></div>
+  </div>
+  <div id="phase-markers">
+    <span class="phase" style="left:0%">0%<br>Denial</span>
+    <span class="phase" style="left:15%">15%<br>Anger</span>
+    <span class="phase" style="left:30%">30%<br>Bargaining</span>
+    <span class="phase" style="left:45%">45%<br>Depression</span>
+    <span class="phase" style="left:60%">60%<br>Acceptance</span>
+    <span class="phase" style="left:75%">75%<br>Hope</span>
+    <span class="phase" style="left:90%">90%<br>Healing</span>
+    <span class="phase" style="left:100%">100%<br>Healed</span>
+  </div>
+  <div id="progress-controls">
+    <button id="decrease-progress" aria-label="Decrease progress">-5%</button>
+    <button id="increase-progress" aria-label="Increase progress">+5%</button>
+  </div>
+  
+  <div id="boy-container">
+    <img id="boy-image" src="" alt="Charlie's healing journey" aria-label="healing status">
+    <button id="shuffle-charlie" title="Shuffle Charlie's appearance">🎲 Shuffle Charlie</button>
+  </div>
 
     <div id="boy-container">
       <img
@@ -90,6 +83,12 @@
     <div id="patch-notes">
       <h2>Patch Notes</h2>
       <ul>
+        <li>
+          Patch notes <strong>1.1.4</strong> - added patch notes.
+        </li>
+        <li>
+          Patch notes <strong>1.1.3</strong> - added dark mode toggle to top right.
+        </li>
         <li>
           Patch notes <strong>1.1.2</strong> - moved the progress control
           buttons lower on the page to improve spacing.

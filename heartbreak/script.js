@@ -218,8 +218,33 @@ function setupButtons() {
   }
 }
 
+function setModeIcon() {
+  const btn = document.getElementById('mode-toggle');
+  if (btn) {
+    btn.textContent = '💡';
+  }
+}
+
+function toggleDarkMode() {
+  document.body.classList.toggle('dark');
+  localStorage.setItem('hb-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
+  setModeIcon();
+}
+
+function initDarkMode() {
+  if (localStorage.getItem('hb-theme') === 'dark') {
+    document.body.classList.add('dark');
+  }
+  setModeIcon();
+  const btn = document.getElementById('mode-toggle');
+  if (btn) {
+    btn.addEventListener('click', toggleDarkMode);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
   updateDaysSinceBreakup();
   setupButtons();
+  initDarkMode();
 });
