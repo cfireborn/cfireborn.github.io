@@ -6,7 +6,7 @@ let currentImagePath = '';
 const breakupDate = new Date('2025-07-11T00:00:00Z');
 
 // Backend endpoint for syncing activity logs
-const LOG_SERVER = 'http://localhost:4000';
+const LOG_SERVER = 'https://cfireborn-github-io.onrender.com';
 
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
