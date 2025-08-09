@@ -36,8 +36,10 @@ Express backend found in `backend/`.
    - `GET /logs` – retrieve all stored events.
 
 Front‑end code in `script.js` posts new entries to the backend and polls
-`/logs` every few seconds to keep the log synced across clients. Update the
-`LOG_SERVER` constant in `script.js` if the backend runs on a different URL.
+`/logs` every few seconds to keep the log synced across clients. By default,
+`LOG_SERVER` points to the deployed Render instance at
+`https://cfireborn-github-io.onrender.com`; update this constant if your
+backend uses a different URL.
 
 #### Deploying on Render
 
