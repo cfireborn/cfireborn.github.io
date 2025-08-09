@@ -14,7 +14,7 @@ const pool = new Pool({
 
 app.use(express.json());
 
-async function ensureTable() {
+async function ensureTables() {
   await pool.query(`CREATE TABLE IF NOT EXISTS logs (
     id SERIAL PRIMARY KEY,
     ip TEXT,
@@ -23,6 +23,12 @@ async function ensureTable() {
     country TEXT,
     region TEXT,
     city TEXT
+  )`);
+
+  // Track counts for various button presses
+  await pool.query(`CREATE TABLE IF NOT EXISTS counts (
+    type TEXT PRIMARY KEY,
+    count INTEGER NOT NULL
   )`);
 }
 
@@ -79,7 +85,40 @@ app.post('/log', async (req, res) => {
   }
 });
 
-ensureTable()
+// Increment a counter for the provided type
+app.post('/count', async (req, res) => {
+  const type = req.body.type;
+  if (!type) return res.status(400).json({ error: 'missing type' });
+
+  try {
+    await pool.query(
+      'INSERT INTO counts (type, count) VALUES ($1, 1) ON CONFLICT (type) DO UPDATE SET count = counts.count + 1',
+      [type]
+    );
+    const { rows } = await pool.query('SELECT count FROM counts WHERE type = $1', [type]);
+    res.json({ type, count: rows[0].count });
+  } catch (err) {
+    console.error('Failed to update count', err);
+    res.status(500).json({ error: 'failed to update count' });
+  }
+});
+
+// Return all counts
+app.get('/stats', async (req, res) => {
+  try {
+    const { rows } = await pool.query('SELECT type, count FROM counts');
+    const stats = { progress: 0, activity: 0, darkmode: 0 };
+    rows.forEach(r => {
+      stats[r.type] = r.count;
+    });
+    res.json(stats);
+  } catch (err) {
+    console.error('Failed to read stats', err);
+    res.status(500).json({ error: 'failed to read stats' });
+  }
+});
+
+ensureTables()
   .then(() => {
     app.listen(PORT, () => {
       console.log(`Log server running on port ${PORT}`);

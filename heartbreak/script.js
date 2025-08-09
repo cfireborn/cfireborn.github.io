@@ -198,6 +198,37 @@ async function sendLog(event) {
   }
 }
 
+// Increment a backend counter and refresh stats
+async function incrementStat(type) {
+  try {
+    await fetch(`${LOG_SERVER}/count`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ type })
+    });
+    fetchStats();
+  } catch (err) {
+    console.error('Failed to update count', err);
+  }
+}
+
+// Fetch stats from backend and update page
+async function fetchStats() {
+  try {
+    const res = await fetch(`${LOG_SERVER}/stats`);
+    if (!res.ok) return;
+    const data = await res.json();
+    const progressEl = document.getElementById('count-progress');
+    const activityEl = document.getElementById('count-activity');
+    const darkEl = document.getElementById('count-darkmode');
+    if (progressEl) progressEl.textContent = data.progress || 0;
+    if (activityEl) activityEl.textContent = data.activity || 0;
+    if (darkEl) darkEl.textContent = data.darkmode || 0;
+  } catch (err) {
+    console.error('Failed to load stats', err);
+  }
+}
+
 // Pull logs from backend and render to the page
 async function syncLogs() {
   try {
@@ -240,6 +271,7 @@ function setupButtons() {
       spawnEmoji(btn.getAttribute('data-emoji'));
       addEntry(btn.getAttribute('data-action'));
       changeProgress(1);
+      incrementStat('activity');
     });
   });
 
@@ -252,10 +284,16 @@ function setupButtons() {
   const increaseBtn = document.getElementById('increase-progress');
   const decreaseBtn = document.getElementById('decrease-progress');
   if (increaseBtn) {
-    increaseBtn.addEventListener('click', () => changeProgress(5));
+    increaseBtn.addEventListener('click', () => {
+      changeProgress(5);
+      incrementStat('progress');
+    });
   }
   if (decreaseBtn) {
-    decreaseBtn.addEventListener('click', () => changeProgress(-5));
+    decreaseBtn.addEventListener('click', () => {
+      changeProgress(-5);
+      incrementStat('progress');
+    });
   }
 }
 
@@ -270,6 +308,7 @@ function toggleDarkMode() {
   document.body.classList.toggle('dark');
   localStorage.setItem('hb-theme', document.body.classList.contains('dark') ? 'dark' : 'light');
   setModeIcon();
+  incrementStat('darkmode');
 }
 
 function initDarkMode() {
@@ -290,4 +329,5 @@ document.addEventListener('DOMContentLoaded', () => {
   initDarkMode();
   syncLogs();
   setInterval(syncLogs, 5000);
+  fetchStats();
 });

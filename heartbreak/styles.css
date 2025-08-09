@@ -305,3 +305,22 @@ body.dark #patch-notes,
 body.dark #patch-notes summary {
   color: #ccc;
 }
+
+#total-stats {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 600px;
+  font-size: 0.7rem;
+  color: #777;
+}
+
+#total-stats summary {
+  font-size: 0.8rem;
+  color: #777;
+  cursor: pointer;
+}
+
+body.dark #total-stats,
+body.dark #total-stats summary {
+  color: #ccc;
+}
