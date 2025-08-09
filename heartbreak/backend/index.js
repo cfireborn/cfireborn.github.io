@@ -4,6 +4,9 @@ const { Pool } = require('pg');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
+// Enable trust proxy so req.ip / x-forwarded-for are respected behind Render's proxy
+app.set('trust proxy', true);
+
 // Connect to Postgres using DATABASE_URL. Render provides this env var
 // automatically when a database is linked. SSL is required for external
 // connections.
@@ -13,6 +16,15 @@ const pool = new Pool({
 });
 
 app.use(express.json());
+
+// Allow cross-origin browser requests from the static site
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+  if (req.method === 'OPTIONS') return res.sendStatus(204);
+  next();
+});
 
 async function ensureTables() {
   await pool.query(`CREATE TABLE IF NOT EXISTS logs (
@@ -50,7 +62,11 @@ app.get('/logs', async (req, res) => {
 
 app.post('/log', async (req, res) => {
   const event = req.body.event || '';
-  const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+  // Normalize IP from proxy header or socket
+  const forwardedFor = req.headers['x-forwarded-for'];
+  const firstForwarded = Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor || '');
+  const rawCandidate = (firstForwarded || req.socket.remoteAddress || '').split(',')[0].trim();
+  const ip = rawCandidate.replace(/^::ffff:/, '').replace(/^::1$/, '127.0.0.1');
   let country = null, region = null, city = null;
 
   try {
