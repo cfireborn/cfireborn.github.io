@@ -5,6 +5,9 @@ let currentImagePath = '';
 // July 11, 2025 at midnight UTC
 const breakupDate = new Date('2025-07-11T00:00:00Z');
 
+// Backend endpoint for syncing activity logs
+const LOG_SERVER = 'http://localhost:4000';
+
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
   if (!span) return;
@@ -180,6 +183,43 @@ const blurbs = {
   ]
 };
 
+// Send a log entry to the backend
+async function sendLog(event) {
+  try {
+    await fetch(`${LOG_SERVER}/log`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event })
+    });
+    // Refresh logs after sending
+    syncLogs();
+  } catch (err) {
+    console.error('Failed to sync log', err);
+  }
+}
+
+// Pull logs from backend and render to the page
+async function syncLogs() {
+  try {
+    const res = await fetch(`${LOG_SERVER}/logs`);
+    if (!res.ok) return;
+    const entries = await res.json();
+    const logEl = document.getElementById('log');
+    if (!logEl) return;
+    logEl.innerHTML = '';
+    entries.slice().reverse().forEach(entry => {
+      const div = document.createElement('div');
+      div.className = 'entry';
+      const ts = new Date(entry.timestamp).toLocaleString();
+      const loc = entry.location ? ` ${entry.location.country || ''}${entry.location.region ? ', ' + entry.location.region : ''}${entry.location.city ? ', ' + entry.location.city : ''}` : '';
+      div.textContent = `[${entry.ip}] [${ts}]${loc ? ' [' + loc.trim() + ']' : ''} ${entry.event}`;
+      logEl.appendChild(div);
+    });
+  } catch (err) {
+    console.error('Failed to load logs', err);
+  }
+}
+
 function addEntry(action) {
   const messages = blurbs[action];
   if (!messages) return;
@@ -190,6 +230,7 @@ function addEntry(action) {
   const now = new Date().toLocaleTimeString();
   div.textContent = `[${now}] ${message}`;
   log.insertBefore(div, log.firstChild);
+  sendLog(message);
 }
 
 function setupButtons() {
@@ -247,4 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDaysSinceBreakup();
   setupButtons();
   initDarkMode();
+  syncLogs();
+  setInterval(syncLogs, 5000);
 });
