@@ -286,3 +286,22 @@ h1#title {
   border-bottom: 1px dashed #aaa;
   font-size: 0.9rem;
 }
+
+#patch-notes {
+  margin-top: 2rem;
+  width: 100%;
+  max-width: 600px;
+  font-size: 0.7rem;
+  color: #777;
+}
+
+#patch-notes summary {
+  font-size: 0.8rem;
+  color: #777;
+  cursor: pointer;
+}
+
+body.dark #patch-notes,
+body.dark #patch-notes summary {
+  color: #ccc;
+}
