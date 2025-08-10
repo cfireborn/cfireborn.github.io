@@ -308,14 +308,18 @@ h1#title {
 
 .log-ip {
   margin-left: 0.25rem;
-  background-color: #000;
-  color: #000;
+  background-color: transparent;
+  color: transparent;
   border-radius: 2px;
   padding: 0 2px;
+  text-decoration: underline dotted;
+  cursor: pointer;
 }
 
-.log-ip:hover {
-  color: #fff;
+/* Reveal IP when toggled */
+.log-ip.revealed {
+  color: inherit;
+  text-decoration: none;
 }
 
 #patch-notes {
@@ -406,8 +410,8 @@ body.dark .lesson-bubble::after {
 }
 
 @keyframes lessonFloat {
-  from { transform: translateY(0); opacity: 1; }
-  to { transform: translateY(-30vh); opacity: 0; }
+  from { transform: translateY(0); }
+  to { transform: translateY(-30vh); }
 }
 
 @media (prefers-reduced-motion: reduce) {
