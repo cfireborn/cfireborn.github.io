@@ -324,3 +324,13 @@ body.dark #total-stats,
 body.dark #total-stats summary {
   color: #ccc;
 }
+
+#last-published {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: #777;
+}
+
+body.dark #last-published {
+  color: #ccc;
+}
