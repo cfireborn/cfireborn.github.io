@@ -17,6 +17,9 @@ const LOCAL_LOGS_KEY = 'hb-local-logs';
 const LOCAL_ONLY_LOGS_KEY = 'hb-local-only-logs';
 const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 
+// Cache IP lookups so we don't repeatedly query the geo service
+const locationCache = {};
+
 function loadLocalStats() {
   try {
     return JSON.parse(localStorage.getItem(LOCAL_STATS_KEY)) || {
@@ -103,6 +106,29 @@ function saveLocalLogs(logs) {
   } catch (_) {}
 }
 
+function populateLocation(ip, span) {
+  if (!ip || ip === 'local') return;
+  if (locationCache[ip]) {
+    span.textContent = `[${locationCache[ip]}] `;
+    return;
+  }
+  fetch(`https://ipapi.co/${ip}/json/`)
+    .then(r => (r.ok ? r.json() : null))
+    .then(data => {
+      if (!data) return;
+      const parts = [];
+      if (data.city) parts.push(data.city);
+      if (data.region) parts.push(data.region);
+      if (data.country_name) parts.push(data.country_name);
+      const loc = parts.join(', ');
+      if (loc) {
+        locationCache[ip] = loc;
+        span.textContent = `[${loc}] `;
+      }
+    })
+    .catch(() => {});
+}
+
 function renderLogs(entries) {
   const logEl = document.getElementById('log');
   if (!logEl) return;
@@ -113,31 +139,33 @@ function renderLogs(entries) {
     div.className = 'entry';
     const ts = new Date(entry.timestamp).toLocaleString();
     const ip = entry.ip || 'local';
+
+    div.textContent = `[${ts}] `;
+
+    const locSpan = document.createElement('span');
+    locSpan.className = 'log-location';
+    div.appendChild(locSpan);
+
+    div.appendChild(document.createTextNode(entry.event));
+
+    const ipSpan = document.createElement('span');
+    ipSpan.className = 'log-ip';
+    ipSpan.textContent = ` [${ip}]`;
+    div.appendChild(ipSpan);
+
+    logEl.appendChild(div);
+
     const locParts = [];
     if (entry.location) {
       if (entry.location.city) locParts.push(entry.location.city);
       if (entry.location.region) locParts.push(entry.location.region);
       if (entry.location.country) locParts.push(entry.location.country);
     }
-    const loc = locParts.join(', ');
-
-    div.textContent = `[${ts}] `;
-    if (loc) {
-      const details = document.createElement('details');
-      details.className = 'log-location';
-      const summary = document.createElement('summary');
-      summary.textContent = `[${loc}]`;
-      const ipDiv = document.createElement('div');
-      ipDiv.textContent = ip;
-      details.appendChild(summary);
-      details.appendChild(ipDiv);
-      div.appendChild(details);
-      div.appendChild(document.createTextNode(' '));
+    if (locParts.length) {
+      locSpan.textContent = `[${locParts.join(', ')}] `;
     } else {
-      div.appendChild(document.createTextNode(`[${ip}] `));
+      populateLocation(ip, locSpan);
     }
-    div.appendChild(document.createTextNode(entry.event));
-    logEl.appendChild(div);
   });
 }
 
