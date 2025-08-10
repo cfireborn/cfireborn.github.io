@@ -64,10 +64,31 @@ function renderLogs(entries) {
     const div = document.createElement('div');
     div.className = 'entry';
     const ts = new Date(entry.timestamp).toLocaleString();
-    const loc = entry.location
-      ? ` ${entry.location.country || ''}${entry.location.region ? ', ' + entry.location.region : ''}${entry.location.city ? ', ' + entry.location.city : ''}`
-      : '';
-    div.textContent = `[${entry.ip || 'local'}] [${ts}]${loc ? ' [' + loc.trim() + ']' : ''} ${entry.event}`;
+    const ip = entry.ip || 'local';
+    const locParts = [];
+    if (entry.location) {
+      if (entry.location.city) locParts.push(entry.location.city);
+      if (entry.location.region) locParts.push(entry.location.region);
+      if (entry.location.country) locParts.push(entry.location.country);
+    }
+    const loc = locParts.join(', ');
+
+    div.textContent = `[${ts}] `;
+    if (loc) {
+      const details = document.createElement('details');
+      details.className = 'log-location';
+      const summary = document.createElement('summary');
+      summary.textContent = `[${loc}]`;
+      const ipDiv = document.createElement('div');
+      ipDiv.textContent = ip;
+      details.appendChild(summary);
+      details.appendChild(ipDiv);
+      div.appendChild(details);
+      div.appendChild(document.createTextNode(' '));
+    } else {
+      div.appendChild(document.createTextNode(`[${ip}] `));
+    }
+    div.appendChild(document.createTextNode(entry.event));
     logEl.appendChild(div);
   });
 }

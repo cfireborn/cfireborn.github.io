@@ -287,6 +287,20 @@ h1#title {
   font-size: 0.9rem;
 }
 
+.log-location {
+  display: inline;
+}
+
+.log-location > summary {
+  display: inline;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.log-location > summary::-webkit-details-marker {
+  display: none;
+}
+
 #patch-notes {
   margin-top: 2rem;
   width: 100%;
