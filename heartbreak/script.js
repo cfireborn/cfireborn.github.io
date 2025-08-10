@@ -16,6 +16,9 @@ const LOCAL_STATS_KEY = 'hb-local-stats';
 const LOCAL_LOGS_KEY = 'hb-local-logs';
 const LOCAL_ONLY_LOGS_KEY = 'hb-local-only-logs';
 const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
+// Frontend geolocation cache
+const GEO_CACHE_KEY = 'hb-geo-cache';
+const GEO_CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 
 function loadLocalStats() {
   try {
@@ -103,44 +106,146 @@ function saveLocalLogs(logs) {
   } catch (_) {}
 }
 
+// ------- Frontend IP geolocation (cached) -------
+function loadGeoCache() {
+  try {
+    return JSON.parse(localStorage.getItem(GEO_CACHE_KEY)) || {};
+  } catch (_) {
+    return {};
+  }
+}
+
+function saveGeoCache(cache) {
+  try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache)); } catch (_) {}
+}
+
+function isLocalIp(ip) {
+  return !ip || ip === 'local' || ip === '127.0.0.1' || ip === '::1';
+}
+
+async function fetchGeoForIp(ip) {
+  if (isLocalIp(ip)) return null;
+  try {
+    const res = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, { cache: 'force-cache' });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return {
+      city: data.city || null,
+      region: data.region || data.region_code || null,
+      country: data.country_name || data.country || null
+    };
+  } catch (_) {
+    return null;
+  }
+}
+
+async function getLocationForIp(ip) {
+  const cache = loadGeoCache();
+  const now = Date.now();
+  const cached = cache[ip];
+  if (cached && (now - cached.cachedAt) < GEO_CACHE_TTL_MS) {
+    return cached.location || null;
+  }
+  const loc = await fetchGeoForIp(ip);
+  cache[ip] = { cachedAt: now, location: loc };
+  saveGeoCache(cache);
+  return loc;
+}
+
+function formatLocation(loc) {
+  if (!loc) return '';
+  const parts = [];
+  if (loc.city) parts.push(loc.city);
+  if (loc.region) parts.push(loc.region);
+  if (loc.country) parts.push(loc.country);
+  return parts.join(', ');
+}
+
+function buildEntryKey(entry) {
+  return `${entry.timestamp}|${entry.event}|${entry.ip || ''}`;
+}
+
 function renderLogs(entries) {
   const logEl = document.getElementById('log');
   if (!logEl) return;
   const merged = (entries || []).concat(loadLocalOnlyLogs());
   logEl.innerHTML = '';
+
   merged.slice().reverse().forEach(entry => {
     const div = document.createElement('div');
     div.className = 'entry';
+    const key = buildEntryKey(entry);
+    div.dataset.key = key;
+
     const ts = new Date(entry.timestamp).toLocaleString();
     const ip = entry.ip || 'local';
-    const locParts = [];
-    if (entry.location) {
-      if (entry.location.city) locParts.push(entry.location.city);
-      if (entry.location.region) locParts.push(entry.location.region);
-      if (entry.location.country) locParts.push(entry.location.country);
-    }
-    const loc = locParts.join(', ');
 
-    div.textContent = `[${ts}] `;
-    if (loc) {
-      const details = document.createElement('details');
-      details.className = 'log-location';
-      const summary = document.createElement('summary');
-      summary.textContent = `[${loc}]`;
-      const ipDiv = document.createElement('div');
-      ipDiv.textContent = ip;
-      details.appendChild(summary);
-      details.appendChild(ipDiv);
-      div.appendChild(details);
-      div.appendChild(document.createTextNode(' '));
-    } else {
-      div.appendChild(document.createTextNode(`[${ip}] `));
+    const timestampNode = document.createTextNode(`[${ts}] `);
+    div.appendChild(timestampNode);
+
+    const locSpan = document.createElement('span');
+    locSpan.className = 'log-loc';
+    const locText = formatLocation(entry.location);
+    if (locText) {
+      locSpan.textContent = `[${locText}] `;
     }
+    div.appendChild(locSpan);
+
     div.appendChild(document.createTextNode(entry.event));
+
+    const ipSpan = document.createElement('span');
+    ipSpan.className = 'spoiler ip-spoiler';
+    ipSpan.setAttribute('role', 'button');
+    ipSpan.setAttribute('tabindex', '0');
+    ipSpan.setAttribute('aria-label', 'Reveal IP');
+    ipSpan.textContent = ` [${ip}]`;
+    function toggleReveal() { ipSpan.classList.toggle('revealed'); }
+    ipSpan.addEventListener('click', toggleReveal);
+    ipSpan.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleReveal();
+      }
+    });
+    div.appendChild(ipSpan);
+
     logEl.appendChild(div);
   });
+
+  // Populate missing locations asynchronously via frontend geolocation
+  populateMissingLocations(merged);
 }
 
+async function populateMissingLocations(entries) {
+  const nodes = Array.from(document.querySelectorAll('#log .entry'));
+  const nodeByKey = new Map(nodes.map(n => [n.dataset.key, n]));
+
+  const tasks = [];
+  for (const entry of entries) {
+    const ip = entry.ip || 'local';
+    const hasLoc = !!formatLocation(entry.location);
+    if (hasLoc || isLocalIp(ip)) continue;
+    const key = buildEntryKey(entry);
+    const node = nodeByKey.get(key);
+    if (!node) continue;
+    tasks.push(
+      getLocationForIp(ip).then(loc => {
+        if (!loc) return;
+        const locSpan = node.querySelector('.log-loc');
+        if (locSpan && !locSpan.textContent) {
+          const txt = formatLocation(loc);
+          if (txt) locSpan.textContent = `[${txt}] `;
+        }
+      })
+    );
+  }
+
+  if (tasks.length) {
+    try { await Promise.allSettled(tasks); } catch (_) {}
+  }
+}
+
+// -------- Remaining existing code --------
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
   if (!span) return;

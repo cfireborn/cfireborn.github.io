@@ -316,6 +316,26 @@ h1#title {
   display: none;
 }
 
+/* Spoiler styling for IP to reduce clutter */
+.spoiler {
+  margin-left: 6px;
+  background: currentColor;
+  color: transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+  cursor: pointer;
+  user-select: none;
+}
+.spoiler::selection { color: transparent; }
+.spoiler.revealed {
+  background: transparent;
+  color: inherit;
+}
+.spoiler:focus { outline: 1px dashed currentColor; outline-offset: 2px; }
+
+/* optional target for loc text */
+.log-loc { white-space: nowrap; }
+
 #patch-notes {
   margin-top: 2rem;
   width: 100%;
