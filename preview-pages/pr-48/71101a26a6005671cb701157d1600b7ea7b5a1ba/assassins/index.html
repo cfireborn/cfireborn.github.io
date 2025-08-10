@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conversation Assassin</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="game-container">
+    <h1>Conversation Assassin</h1>
+    <p>Enter the list of participants (comma-separated) to initialize the game:</p>
+    <input type="text" id="participant-input" placeholder="e.g., Alice, Bob, Charlie">
+    <button id="initialize-game">Start Game</button>
+    <div id="game-output"></div>
+
+    <hr>
+
+    <div id="player-section" style="display: none;">
+      <h2>Check Your Assignment</h2>
+      <input type="text" id="player-name" placeholder="Enter your name">
+      <button id="get-assignment">Get Target</button>
+      <div id="assignment-output"></div>
+    </div>
+    <div id="admin-panel" style="display: none;">
+      <hr>
+      <h2>Admin Panel</h2>
+      <div>
+        <button id="view-assignments">View Assignments</button>
+        <div id="assignments-output"></div>
+      </div>
+      <div>
+        <h3>Kill Word Pool</h3>
+        <textarea id="killword-pool" rows="5" cols="40"></textarea>
+        <br>
+        <button id="update-killword-pool">Update Kill Words</button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>
