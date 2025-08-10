@@ -1,0 +1,107 @@
+{
+  "stages": [
+    {
+      "name": "denial",
+      "label": "Denial",
+      "minHealing": 0,
+      "maxHealing": 15,
+      "folder": "stage-1-denial",
+      "description": "Shock, disbelief, numbness",
+      "themes": ["confusion", "looking away", "closed eyes", "distant stare"],
+      "colors": ["muted", "grey", "desaturated"]
+    },
+    {
+      "name": "anger",
+      "label": "Anger", 
+      "minHealing": 15,
+      "maxHealing": 30,
+      "folder": "stage-2-anger",
+      "description": "Frustration, rage, blame",
+      "themes": ["clenched fists", "frowning", "aggressive postures"],
+      "colors": ["red", "orange", "intense"]
+    },
+    {
+      "name": "bargaining",
+      "label": "Bargaining",
+      "minHealing": 30,
+      "maxHealing": 45, 
+      "folder": "stage-3-bargaining",
+      "description": "Desperation, pleading, what-if thinking",
+      "themes": ["hands reaching out", "looking up", "praying gestures"],
+      "colors": ["yellow", "amber", "searching"]
+    },
+    {
+      "name": "depression",
+      "label": "Depression",
+      "minHealing": 45,
+      "maxHealing": 60,
+      "folder": "stage-4-depression", 
+      "description": "Deep sadness, withdrawal, introspection",
+      "themes": ["tears", "head in hands", "slouched posture"],
+      "colors": ["blue", "dark", "melancholy"]
+    },
+    {
+      "name": "acceptance",
+      "label": "Acceptance",
+      "minHealing": 60,
+      "maxHealing": 75,
+      "folder": "stage-5-acceptance",
+      "description": "Understanding, calm sadness, beginning peace", 
+      "themes": ["neutral expression", "gentle sadness", "open posture"],
+      "colors": ["neutral", "balanced", "calm"]
+    },
+    {
+      "name": "hope",
+      "label": "Hope",
+      "minHealing": 75,
+      "maxHealing": 90,
+      "folder": "stage-6-hope",
+      "description": "Cautious optimism, small smiles, looking forward",
+      "themes": ["slight smile", "looking toward light", "lighter colors"],
+      "colors": ["light blue", "soft yellow", "dawn"]
+    },
+    {
+      "name": "healing",
+      "label": "Healing",
+      "minHealing": 90,
+      "maxHealing": 100,
+      "folder": "stage-7-healing",
+      "description": "Growth, wisdom, renewed strength",
+      "themes": ["confident posture", "genuine smile", "bright colors"],
+      "colors": ["green", "bright", "vibrant"]
+    }
+  ],
+  "artStyles": [
+    {
+      "name": "cartoon",
+      "folder": "cartoon",
+      "description": "Cartoon style, animated, clean lines"
+    },
+    {
+      "name": "impressionist", 
+      "folder": "impressionist",
+      "description": "Impressionist painting style, soft brushstrokes"
+    },
+    {
+      "name": "abstract",
+      "folder": "abstract", 
+      "description": "Abstract art style, geometric shapes, emotional colors"
+    },
+    {
+      "name": "realistic-oil-painting",
+      "folder": "realistic-oil-painting",
+      "description": "Classical oil painting, renaissance style"
+    },
+    {
+      "name": "photorealistic",
+      "folder": "photorealistic",
+      "description": "Photorealistic, high detail, professional lighting"
+    }
+  ],
+  "imageSpecs": {
+    "minResolution": "1024x1024",
+    "formats": ["png", "jpg"],
+    "minImagesPerStyle": 5,
+    "totalMinImages": 175
+  }
+}
