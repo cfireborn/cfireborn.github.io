@@ -14,16 +14,20 @@ const LOG_SERVER =
 // Local fallback storage keys
 const LOCAL_STATS_KEY = 'hb-local-stats';
 const LOCAL_LOGS_KEY = 'hb-local-logs';
+const LOCAL_ONLY_LOGS_KEY = 'hb-local-only-logs';
+const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 
 function loadLocalStats() {
   try {
     return JSON.parse(localStorage.getItem(LOCAL_STATS_KEY)) || {
       progress: 0,
       activity: 0,
-      darkmode: 0
+      darkmode: 0,
+      shuffle_charlie_button_presses: 0,
+      valuable_lessons_button_presses: 0
     };
   } catch (_) {
-    return { progress: 0, activity: 0, darkmode: 0 };
+    return { progress: 0, activity: 0, darkmode: 0, shuffle_charlie_button_presses: 0, valuable_lessons_button_presses: 0 };
   }
 }
 
@@ -33,13 +37,56 @@ function saveLocalStats(stats) {
   } catch (_) {}
 }
 
+function loadLocalDaily() {
+  try {
+    const obj = JSON.parse(localStorage.getItem(LOCAL_DAILY_KEY));
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (!obj || obj.date !== todayStr) {
+      return { date: todayStr, counts: {} };
+    }
+    return obj;
+  } catch (_) {
+    return { date: new Date().toISOString().slice(0, 10), counts: {} };
+  }
+}
+
+function saveLocalDaily(obj) {
+  try { localStorage.setItem(LOCAL_DAILY_KEY, JSON.stringify(obj)); } catch (_) {}
+}
+
+function loadLocalOnlyLogs() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_ONLY_LOGS_KEY)) || [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function saveLocalOnlyLogs(logs) {
+  try {
+    localStorage.setItem(LOCAL_ONLY_LOGS_KEY, JSON.stringify(logs));
+  } catch (_) {}
+}
+
 function renderStats(stats) {
-  const progressEl = document.getElementById('count-progress');
-  const activityEl = document.getElementById('count-activity');
-  const darkEl = document.getElementById('count-darkmode');
-  if (progressEl) progressEl.textContent = stats.progress || 0;
-  if (activityEl) activityEl.textContent = stats.activity || 0;
-  if (darkEl) darkEl.textContent = stats.darkmode || 0;
+  // Normalize supports both flat totals and { totals: {}, today: {} }
+  let totals = stats;
+  let today = {};
+  if (stats && typeof stats === 'object' && 'totals' in stats) {
+    totals = stats.totals || {};
+    today = stats.today || {};
+  }
+  // Merge in local daily fallback
+  const localDaily = loadLocalDaily();
+  const keys = ['progress', 'activity', 'darkmode', 'shuffle_charlie_button_presses', 'valuable_lessons_button_presses'];
+  keys.forEach(key => {
+    const totalVal = (totals && typeof totals[key] === 'number') ? totals[key] : (loadLocalStats()[key] || 0);
+    const todayVal = (today && typeof today[key] === 'number') ? today[key] : (localDaily.counts[key] || 0);
+    const todayEl = document.getElementById(`count-${key}-today`);
+    const totalEl = document.getElementById(`count-${key}-total`);
+    if (todayEl) todayEl.textContent = todayVal;
+    if (totalEl) totalEl.textContent = totalVal;
+  });
 }
 
 function loadLocalLogs() {
@@ -59,8 +106,9 @@ function saveLocalLogs(logs) {
 function renderLogs(entries) {
   const logEl = document.getElementById('log');
   if (!logEl) return;
+  const merged = (entries || []).concat(loadLocalOnlyLogs());
   logEl.innerHTML = '';
-  entries.slice().reverse().forEach(entry => {
+  merged.slice().reverse().forEach(entry => {
     const div = document.createElement('div');
     div.className = 'entry';
     const ts = new Date(entry.timestamp).toLocaleString();
@@ -290,6 +338,15 @@ async function sendLog(event) {
 
 // Increment a backend counter and refresh stats
 async function incrementStat(type) {
+  // Optimistic local update
+  const ls = loadLocalStats();
+  ls[type] = (ls[type] || 0) + 1;
+  saveLocalStats(ls);
+  const daily = loadLocalDaily();
+  daily.counts[type] = (daily.counts[type] || 0) + 1;
+  saveLocalDaily(daily);
+  renderStats({ totals: ls, today: daily.counts });
+
   try {
     await fetch(`${LOG_SERVER}/count`, {
       method: 'POST',
@@ -299,10 +356,7 @@ async function incrementStat(type) {
     await fetchStats();
   } catch (err) {
     console.error('Failed to update count', err);
-    const stats = loadLocalStats();
-    stats[type] = (stats[type] || 0) + 1;
-    saveLocalStats(stats);
-    renderStats(stats);
+    // already updated locally
   }
 }
 
@@ -313,10 +367,16 @@ async function fetchStats() {
     if (!res.ok) throw new Error('bad status');
     const data = await res.json();
     renderStats(data);
-    saveLocalStats(data);
+    // Also save flat totals fallback
+    if (data && data.totals) saveLocalStats(data.totals);
+    if (data && data.today) {
+      const d = loadLocalDaily();
+      d.counts = Object.assign({}, d.counts, data.today);
+      saveLocalDaily(d);
+    }
   } catch (err) {
     console.error('Failed to load stats', err);
-    renderStats(loadLocalStats());
+    renderStats({ totals: loadLocalStats(), today: loadLocalDaily().counts });
   }
 }
 
@@ -362,7 +422,10 @@ function setupButtons() {
   // Setup shuffle Charlie button
   const shuffleBtn = document.getElementById('shuffle-charlie');
   if (shuffleBtn) {
-    shuffleBtn.addEventListener('click', shuffleCharlie);
+    shuffleBtn.addEventListener('click', () => {
+      shuffleCharlie();
+      incrementStat('shuffle_charlie_button_presses');
+    });
   }
 
   const increaseBtn = document.getElementById('increase-progress');
@@ -378,6 +441,12 @@ function setupButtons() {
       changeProgress(-5);
       incrementStat('progress');
     });
+  }
+
+  // Lessons button
+  const lessonsBtn = document.getElementById('valuable-lessons');
+  if (lessonsBtn) {
+    lessonsBtn.addEventListener('click', onValuableLessonClick);
   }
 }
 
@@ -406,14 +475,166 @@ function initDarkMode() {
   }
 }
 
+// -------- Lessons loader and bubble system --------
+let lessonsPool = [];
+let lessonsIndex = 0;
+let lessonsAvailable = false;
+
+async function loadLessons() {
+  try {
+    const res = await fetch('assets/lessons.txt', { cache: 'no-cache' });
+    if (!res.ok) throw new Error('failed');
+    const text = await res.text();
+    const lines = text.split(/\r?\n/)
+      .map(l => l.replace(/\s+/g, ' ').trim())
+      .filter(l => l.length > 0);
+    // de-duplicate
+    const unique = Array.from(new Set(lines));
+    if (unique.length === 0) throw new Error('empty');
+    // shuffle
+    lessonsPool = unique.slice();
+    shuffleArray(lessonsPool);
+    lessonsIndex = 0;
+    lessonsAvailable = true;
+    setLessonsButtonEnabled(true);
+  } catch (err) {
+    lessonsAvailable = false;
+    setLessonsButtonEnabled(false);
+    showToastOnce('No lessons available.');
+  }
+}
+
+function setLessonsButtonEnabled(enabled) {
+  const btn = document.getElementById('valuable-lessons');
+  if (!btn) return;
+  btn.disabled = !enabled;
+  btn.classList.toggle('disabled', !enabled);
+}
+
+function nextLesson() {
+  if (!lessonsAvailable || lessonsPool.length === 0) return null;
+  if (lessonsIndex >= lessonsPool.length) {
+    shuffleArray(lessonsPool);
+    lessonsIndex = 0;
+  }
+  return lessonsPool[lessonsIndex++];
+}
+
+function shuffleArray(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+let activeBubbles = 0;
+const bubbleQueue = [];
+
+function onValuableLessonClick() {
+  if (!lessonsAvailable) return;
+  const lesson = nextLesson();
+  if (!lesson) return;
+  enqueueBubble(lesson);
+  appendLessonToLog(lesson);
+  incrementStat('valuable_lessons_button_presses');
+}
+
+function enqueueBubble(text) {
+  if (activeBubbles < 3) {
+    showBubble(text);
+  } else {
+    bubbleQueue.push(text);
+  }
+}
+
+function showBubble(text) {
+  activeBubbles++;
+  const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'lesson-bubble-wrapper';
+  wrapper.style.pointerEvents = 'none';
+  wrapper.style.position = 'fixed';
+  wrapper.style.left = '0';
+  wrapper.style.right = '0';
+  wrapper.style.bottom = 'calc(56px + env(safe-area-inset-bottom))';
+  wrapper.style.display = 'flex';
+  wrapper.style.justifyContent = 'center';
+  wrapper.style.zIndex = '9999';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'lesson-bubble';
+  bubble.textContent = text;
+  wrapper.appendChild(bubble);
+  document.body.appendChild(wrapper);
+
+  const charCount = text.length;
+  const durationSec = Math.max(5, Math.min(10, 3 + 0.025 * charCount));
+
+  if (prefersReduced) {
+    bubble.style.transition = 'opacity 1s ease';
+    bubble.style.opacity = '0';
+    setTimeout(() => finishBubble(wrapper), 1000);
+  } else {
+    bubble.style.setProperty('--hb-bubble-duration', durationSec + 's');
+    bubble.classList.add('animate');
+    setTimeout(() => finishBubble(wrapper), durationSec * 1000);
+  }
+}
+
+function finishBubble(wrapper) {
+  if (wrapper && wrapper.parentNode) wrapper.parentNode.removeChild(wrapper);
+  activeBubbles = Math.max(0, activeBubbles - 1);
+  if (bubbleQueue.length > 0) {
+    const next = bubbleQueue.shift();
+    showBubble(next);
+  }
+}
+
+function appendLessonToLog(lesson) {
+  const localOnly = loadLocalOnlyLogs();
+  localOnly.push({
+    ip: 'local',
+    timestamp: new Date().toISOString(),
+    event: `Lesson: ${lesson}`
+  });
+  saveLocalOnlyLogs(localOnly);
+  // Re-render with server logs plus local-only
+  renderLogs(loadLocalLogs());
+}
+
+let toastShown = false;
+function showToastOnce(message) {
+  if (toastShown) return;
+  toastShown = true;
+  const toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  setTimeout(() => {
+    toast.classList.add('hide');
+    setTimeout(() => toast.remove(), 400);
+  }, 3000);
+}
+
+// -------- PWA registration --------
+function registerServiceWorker() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW reg failed', err));
+  }
+}
+
+// -------- Init --------
 document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
   updateDaysSinceBreakup();
   setupButtons();
   initDarkMode();
   renderLogs(loadLocalLogs());
-  renderStats(loadLocalStats());
+  renderStats({ totals: loadLocalStats(), today: loadLocalDaily().counts });
   syncLogs();
   setInterval(syncLogs, 5000);
   fetchStats();
+  loadLessons();
+  registerServiceWorker();
 });
