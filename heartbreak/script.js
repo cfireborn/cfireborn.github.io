@@ -322,13 +322,6 @@ function initDarkMode() {
   }
 }
 
-function setLastPublished() {
-  const el = document.getElementById('last-published');
-  if (!el) return;
-  const now = new Date();
-  el.textContent = `Last published: ${now.toLocaleDateString(undefined, { month: 'numeric', day: 'numeric', year: 'numeric' })}, ${now.toLocaleTimeString()}`;
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   updateProgress();
   updateDaysSinceBreakup();
@@ -337,5 +330,4 @@ document.addEventListener('DOMContentLoaded', () => {
   syncLogs();
   setInterval(syncLogs, 5000);
   fetchStats();
-  setLastPublished();
 });
