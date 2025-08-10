@@ -81,7 +81,7 @@ function renderStats(stats) {
   }
   // Merge in local daily fallback
   const localDaily = loadLocalDaily();
-  const keys = ['progress', 'activity', 'darkmode', 'shuffle_charlie_button_presses', 'valuable_lessons_button_presses'];
+  const keys = ['progress', 'activity', 'darkmode', 'shuffle_charlie_button_presses', 'valuable_lessons_button_presses', 'meaning_odi_et_amo_clicks', 'meaning_knowledge_and_communication_clicks'];
   keys.forEach(key => {
     const totalVal = (totals && typeof totals[key] === 'number') ? totals[key] : (loadLocalStats()[key] || 0);
     const todayVal = (today && typeof today[key] === 'number') ? today[key] : (localDaily.counts[key] || 0);
@@ -172,8 +172,10 @@ function renderLogs(entries) {
     }
     if (locParts.length) {
       locSpan.textContent = `[${locParts.join(', ')}] `;
-    } else {
+    } else if (ip && ip !== 'local') {
       populateLocation(ip, locSpan);
+    } else {
+      locSpan.textContent = '';
     }
   });
 }
@@ -485,6 +487,20 @@ function setupButtons() {
   if (lessonsBtn) {
     lessonsBtn.addEventListener('click', onValuableLessonClick);
   }
+
+  // Meaning of life poll buttons
+  const meaningOdi = document.getElementById('meaning-odi');
+  const meaningKnowledge = document.getElementById('meaning-knowledge');
+  if (meaningOdi) {
+    meaningOdi.addEventListener('click', () => {
+      incrementStat('meaning_odi_et_amo_clicks');
+    });
+  }
+  if (meaningKnowledge) {
+    meaningKnowledge.addEventListener('click', () => {
+      incrementStat('meaning_knowledge_and_communication_clicks');
+    });
+  }
 }
 
 function setModeIcon() {
@@ -567,6 +583,8 @@ function shuffleArray(arr) {
 
 let activeBubbles = 0;
 const bubbleQueue = [];
+let bubbleSideToggle = 'left';
+let occupiedSlots = []; // track active slots to reduce overlap
 
 function onValuableLessonClick() {
   if (!lessonsAvailable) return;
@@ -585,6 +603,13 @@ function enqueueBubble(text) {
   }
 }
 
+function chooseFreeSlot() {
+  // 3 vertical slots: bottom, middle, top offsets
+  const slots = [0, 1, 2];
+  for (const s of slots) if (!occupiedSlots.includes(s)) return s;
+  return 0;
+}
+
 function showBubble(text) {
   activeBubbles++;
   const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -595,46 +620,58 @@ function showBubble(text) {
   wrapper.style.position = 'fixed';
   wrapper.style.left = '0';
   wrapper.style.right = '0';
-  wrapper.style.bottom = 'calc(56px + env(safe-area-inset-bottom))';
   wrapper.style.display = 'flex';
   wrapper.style.justifyContent = 'center';
   wrapper.style.zIndex = '9999';
 
+  // slot positioning to reduce overlap
+  const slot = chooseFreeSlot();
+  occupiedSlots.push(slot);
+  const baseBottomPx = 56; // base bottom above safe area
+  const slotSpacingPx = 72; // vertical spacing between bubbles
+  wrapper.style.bottom = `calc(${baseBottomPx + slot * slotSpacingPx}px + env(safe-area-inset-bottom))`;
+
   const bubble = document.createElement('div');
   bubble.className = 'lesson-bubble';
+  // alternate tail side
+  const side = bubbleSideToggle === 'left' ? 'tail-left' : 'tail-right';
+  bubbleSideToggle = bubbleSideToggle === 'left' ? 'right' : 'left';
+  bubble.classList.add(side);
   bubble.textContent = text;
   wrapper.appendChild(bubble);
   document.body.appendChild(wrapper);
 
   const charCount = text.length;
-  // Triple duration baseline; scale with length
   const durationSec = Math.max(12, Math.min(30, 9 + 0.075 * charCount));
+
+  const cleanup = () => {
+    // free slot and remove
+    occupiedSlots = occupiedSlots.filter(s => s !== slot);
+    finishBubble(wrapper);
+  };
 
   if (prefersReduced) {
     bubble.style.transition = 'opacity 1s ease';
     bubble.style.opacity = '0';
-    setTimeout(() => finishBubble(wrapper), 1000);
+    setTimeout(cleanup, 1000);
   } else {
-    // Animate position via CSS, control opacity via JS reverse quadratic
     bubble.style.setProperty('--hb-bubble-duration', durationSec + 's');
     bubble.classList.add('animate');
 
     let start = null;
-    const maxOpacity = 0.95; // stays opaque most of lifetime
+    const maxOpacity = 0.95;
     function step(ts) {
       if (start === null) start = ts;
       const elapsed = (ts - start) / 1000;
       const t = Math.min(1, elapsed / durationSec);
-      // Reverse quadratic: opacity ~ 1 - (t^2) scaled, clamped to keep near-opaque until late
       const opacity = (1 - t * t * 0.85) * maxOpacity;
       bubble.style.opacity = String(Math.max(0, Math.min(1, opacity)));
       if (t < 1) {
         requestAnimationFrame(step);
       } else {
-        finishBubble(wrapper);
+        cleanup();
       }
     }
-    // Start with high opacity
     bubble.style.opacity = String(maxOpacity);
     requestAnimationFrame(step);
   }
