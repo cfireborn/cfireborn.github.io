@@ -11,6 +11,67 @@ const LOG_SERVER =
     ? 'http://localhost:4000'
     : 'https://cfireborn-github-io.onrender.com';
 
+// Local fallback storage keys
+const LOCAL_STATS_KEY = 'hb-local-stats';
+const LOCAL_LOGS_KEY = 'hb-local-logs';
+
+function loadLocalStats() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_STATS_KEY)) || {
+      progress: 0,
+      activity: 0,
+      darkmode: 0
+    };
+  } catch (_) {
+    return { progress: 0, activity: 0, darkmode: 0 };
+  }
+}
+
+function saveLocalStats(stats) {
+  try {
+    localStorage.setItem(LOCAL_STATS_KEY, JSON.stringify(stats));
+  } catch (_) {}
+}
+
+function renderStats(stats) {
+  const progressEl = document.getElementById('count-progress');
+  const activityEl = document.getElementById('count-activity');
+  const darkEl = document.getElementById('count-darkmode');
+  if (progressEl) progressEl.textContent = stats.progress || 0;
+  if (activityEl) activityEl.textContent = stats.activity || 0;
+  if (darkEl) darkEl.textContent = stats.darkmode || 0;
+}
+
+function loadLocalLogs() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCAL_LOGS_KEY)) || [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function saveLocalLogs(logs) {
+  try {
+    localStorage.setItem(LOCAL_LOGS_KEY, JSON.stringify(logs));
+  } catch (_) {}
+}
+
+function renderLogs(entries) {
+  const logEl = document.getElementById('log');
+  if (!logEl) return;
+  logEl.innerHTML = '';
+  entries.slice().reverse().forEach(entry => {
+    const div = document.createElement('div');
+    div.className = 'entry';
+    const ts = new Date(entry.timestamp).toLocaleString();
+    const loc = entry.location
+      ? ` ${entry.location.country || ''}${entry.location.region ? ', ' + entry.location.region : ''}${entry.location.city ? ', ' + entry.location.city : ''}`
+      : '';
+    div.textContent = `[${entry.ip || 'local'}] [${ts}]${loc ? ' [' + loc.trim() + ']' : ''} ${entry.event}`;
+    logEl.appendChild(div);
+  });
+}
+
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
   if (!span) return;
@@ -196,6 +257,13 @@ async function sendLog(event) {
     });
   } catch (err) {
     console.error('Failed to sync log', err);
+    const logs = loadLocalLogs();
+    logs.push({
+      ip: 'local',
+      timestamp: new Date().toISOString(),
+      event
+    });
+    saveLocalLogs(logs);
   }
 }
 
@@ -210,6 +278,10 @@ async function incrementStat(type) {
     await fetchStats();
   } catch (err) {
     console.error('Failed to update count', err);
+    const stats = loadLocalStats();
+    stats[type] = (stats[type] || 0) + 1;
+    saveLocalStats(stats);
+    renderStats(stats);
   }
 }
 
@@ -217,16 +289,13 @@ async function incrementStat(type) {
 async function fetchStats() {
   try {
     const res = await fetch(`${LOG_SERVER}/stats`);
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('bad status');
     const data = await res.json();
-    const progressEl = document.getElementById('count-progress');
-    const activityEl = document.getElementById('count-activity');
-    const darkEl = document.getElementById('count-darkmode');
-    if (progressEl) progressEl.textContent = data.progress || 0;
-    if (activityEl) activityEl.textContent = data.activity || 0;
-    if (darkEl) darkEl.textContent = data.darkmode || 0;
+    renderStats(data);
+    saveLocalStats(data);
   } catch (err) {
     console.error('Failed to load stats', err);
+    renderStats(loadLocalStats());
   }
 }
 
@@ -234,21 +303,13 @@ async function fetchStats() {
 async function syncLogs() {
   try {
     const res = await fetch(`${LOG_SERVER}/logs`);
-    if (!res.ok) return;
+    if (!res.ok) throw new Error('bad status');
     const entries = await res.json();
-    const logEl = document.getElementById('log');
-    if (!logEl) return;
-    logEl.innerHTML = '';
-    entries.slice().reverse().forEach(entry => {
-      const div = document.createElement('div');
-      div.className = 'entry';
-      const ts = new Date(entry.timestamp).toLocaleString();
-      const loc = entry.location ? ` ${entry.location.country || ''}${entry.location.region ? ', ' + entry.location.region : ''}${entry.location.city ? ', ' + entry.location.city : ''}` : '';
-      div.textContent = `[${entry.ip}] [${ts}]${loc ? ' [' + loc.trim() + ']' : ''} ${entry.event}`;
-      logEl.appendChild(div);
-    });
+    renderLogs(entries);
+    saveLocalLogs(entries);
   } catch (err) {
     console.error('Failed to load logs', err);
+    renderLogs(loadLocalLogs());
   }
 }
 
@@ -329,6 +390,8 @@ document.addEventListener('DOMContentLoaded', () => {
   updateDaysSinceBreakup();
   setupButtons();
   initDarkMode();
+  renderLogs(loadLocalLogs());
+  renderStats(loadLocalStats());
   syncLogs();
   setInterval(syncLogs, 5000);
   fetchStats();
