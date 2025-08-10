@@ -112,14 +112,14 @@ function populateLocation(ip, span) {
     span.textContent = `[${locationCache[ip]}] `;
     return;
   }
-  fetch(`https://ipapi.co/${ip}/json/`)
+  fetch(`https://ipwho.is/${ip}`, { method: 'GET', referrerPolicy: 'no-referrer' })
     .then(r => (r.ok ? r.json() : null))
     .then(data => {
-      if (!data) return;
+      if (!data || data.success === false) return;
       const parts = [];
       if (data.city) parts.push(data.city);
       if (data.region) parts.push(data.region);
-      if (data.country_name) parts.push(data.country_name);
+      if (data.country) parts.push(data.country);
       const loc = parts.join(', ');
       if (loc) {
         locationCache[ip] = loc;
