@@ -20,6 +20,55 @@ const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 // Cache IP lookups so we don't repeatedly query the geo service
 const locationCache = {};
 
+async function fetchLocationFromProviders(ip) {
+  const providers = [
+    // ipwho.is allows CORS and IPv4/IPv6
+    (ip) => `https://ipwho.is/${encodeURIComponent(ip)}`,
+    // ipapi.co JSON
+    (ip) => `https://ipapi.co/${encodeURIComponent(ip)}/json/`
+  ];
+
+  for (const makeUrl of providers) {
+    try {
+      const res = await fetch(makeUrl(ip));
+      if (!res || !res.ok) continue;
+      const data = await res.json();
+
+      // Normalize fields across providers
+      const city = data.city || data.town || data.locality || '';
+      const region = data.region || data.region_name || data.regionName || '';
+      const country = data.country || data.country_name || data.countryName || '';
+
+      const parts = [];
+      if (city) parts.push(city);
+      if (region) parts.push(region);
+      if (country) parts.push(country);
+      const loc = parts.join(', ');
+      if (loc) return loc;
+    } catch (_) {
+      // try next provider
+    }
+  }
+  return '';
+}
+
+function populateLocation(ip, span) {
+  if (!ip || ip === 'local') return;
+  if (locationCache[ip]) {
+    span.textContent = `[${locationCache[ip]}] `;
+    return;
+  }
+  // Do not block render; resolve asynchronously
+  fetchLocationFromProviders(ip)
+    .then(loc => {
+      if (loc) {
+        locationCache[ip] = loc;
+        span.textContent = `[${loc}] `;
+      }
+    })
+    .catch(() => {});
+}
+
 function loadLocalStats() {
   try {
     return JSON.parse(localStorage.getItem(LOCAL_STATS_KEY)) || {
@@ -104,29 +153,6 @@ function saveLocalLogs(logs) {
   try {
     localStorage.setItem(LOCAL_LOGS_KEY, JSON.stringify(logs));
   } catch (_) {}
-}
-
-function populateLocation(ip, span) {
-  if (!ip || ip === 'local') return;
-  if (locationCache[ip]) {
-    span.textContent = `[${locationCache[ip]}] `;
-    return;
-  }
-  fetch(`https://ipapi.co/${ip}/json/`)
-    .then(r => (r.ok ? r.json() : null))
-    .then(data => {
-      if (!data) return;
-      const parts = [];
-      if (data.city) parts.push(data.city);
-      if (data.region) parts.push(data.region);
-      if (data.country_name) parts.push(data.country_name);
-      const loc = parts.join(', ');
-      if (loc) {
-        locationCache[ip] = loc;
-        span.textContent = `[${loc}] `;
-      }
-    })
-    .catch(() => {});
 }
 
 function renderLogs(entries) {
