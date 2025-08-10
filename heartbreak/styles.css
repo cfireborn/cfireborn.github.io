@@ -389,20 +389,26 @@ body.dark .lesson-bubble {
   color: #f0f0f0;
 }
 
- .lesson-bubble::after {
+/* Tall, comic-style tail pointing downward with left/right variants */
+.lesson-bubble::after {
   content: '';
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  bottom: -10px;
-  width: 0; height: 0;
-  border-left: 10px solid transparent;
-  border-right: 10px solid transparent;
-  border-bottom: 10px solid #fff;
+  bottom: -18px;
+  width: 16px;
+  height: 30px;
+  background: inherit; /* match bubble bg */
+  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.15));
 }
 
-body.dark .lesson-bubble::after {
-  border-bottom-color: #222;
+.lesson-bubble.tail-left::after {
+  left: 18px;
+  transform: rotate(10deg);
+}
+
+.lesson-bubble.tail-right::after {
+  right: 18px;
+  transform: rotate(-10deg);
 }
 
 .lesson-bubble.animate {
@@ -436,3 +442,48 @@ body.dark .lesson-bubble::after {
   transition: opacity 0.3s ease;
 }
 .toast.hide { opacity: 0; }
+
+/* Meaning of life poll section */
+#meaning-of-life {
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 600px;
+  text-align: center;
+}
+
+#meaning-of-life p {
+  margin: 0.25rem 0 0.5rem 0;
+}
+
+.meaning-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.meaning-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border-radius: 25px;
+  background-color: #8e64ff;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.meaning-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  background-color: #7a52ef;
+}
+
+body.dark .meaning-button {
+  background-color: #6a4de0;
+}
+
+body.dark .meaning-button:hover {
+  background-color: #5a41c1;
+}
