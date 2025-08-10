@@ -6,7 +6,10 @@ let currentImagePath = '';
 const breakupDate = new Date('2025-07-11T00:00:00Z');
 
 // Backend endpoint for syncing activity logs
-const LOG_SERVER = 'https://cfireborn-github-io.onrender.com';
+const LOG_SERVER =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:4000'
+    : 'https://cfireborn-github-io.onrender.com';
 
 function updateDaysSinceBreakup() {
   const span = document.getElementById('days-since');
@@ -191,8 +194,6 @@ async function sendLog(event) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ event })
     });
-    // Refresh logs after sending
-    syncLogs();
   } catch (err) {
     console.error('Failed to sync log', err);
   }
@@ -206,7 +207,7 @@ async function incrementStat(type) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ type })
     });
-    fetchStats();
+    await fetchStats();
   } catch (err) {
     console.error('Failed to update count', err);
   }
@@ -251,7 +252,7 @@ async function syncLogs() {
   }
 }
 
-function addEntry(action) {
+async function addEntry(action) {
   const messages = blurbs[action];
   if (!messages) return;
   const message = messages[Math.floor(Math.random() * messages.length)];
@@ -261,15 +262,16 @@ function addEntry(action) {
   const now = new Date().toLocaleTimeString();
   div.textContent = `[${now}] ${message}`;
   log.insertBefore(div, log.firstChild);
-  sendLog(message);
+  await sendLog(message);
+  await syncLogs();
 }
 
 function setupButtons() {
   // Setup healing activity buttons
   document.querySelectorAll('#buttons button').forEach(btn => {
-    btn.addEventListener('click', () => {
+    btn.addEventListener('click', async () => {
       spawnEmoji(btn.getAttribute('data-emoji'));
-      addEntry(btn.getAttribute('data-action'));
+      await addEntry(btn.getAttribute('data-action'));
       changeProgress(1);
       incrementStat('activity');
     });
