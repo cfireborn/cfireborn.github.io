@@ -43,7 +43,7 @@ async function ensureTables() {
 
 app.get('/logs', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT ip, timestamp, event FROM logs ORDER BY id ASC');
+    const { rows } = await pool.query('SELECT ip, timestamp, event FROM logs ORDER BY id DESC LIMIT 50');
     res.json(rows);
   } catch (err) {
     console.error('Failed to read logs', err);

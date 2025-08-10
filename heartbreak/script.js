@@ -132,9 +132,17 @@ function populateLocation(ip, span) {
 function renderLogs(entries) {
   const logEl = document.getElementById('log');
   if (!logEl) return;
-  const merged = (entries || []).concat(loadLocalOnlyLogs());
+  // Server may already return newest-first limited list; merge and re-sort
+  const server = Array.isArray(entries) ? entries.slice() : [];
+  const locals = loadLocalOnlyLogs();
+  const merged = server.concat(locals);
+  // Sort by timestamp desc
+  merged.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  // Cap to ~50 most recent
+  const capped = merged.slice(0, 50);
+
   logEl.innerHTML = '';
-  merged.slice().reverse().forEach(entry => {
+  capped.forEach(entry => {
     const div = document.createElement('div');
     div.className = 'entry';
     const ts = new Date(entry.timestamp).toLocaleString();
@@ -151,6 +159,7 @@ function renderLogs(entries) {
     const ipSpan = document.createElement('span');
     ipSpan.className = 'log-ip';
     ipSpan.textContent = ` [${ip}]`;
+    ipSpan.addEventListener('click', () => ipSpan.classList.toggle('revealed'));
     div.appendChild(ipSpan);
 
     logEl.appendChild(div);
@@ -542,8 +551,9 @@ function setLessonsButtonEnabled(enabled) {
 function nextLesson() {
   if (!lessonsAvailable || lessonsPool.length === 0) return null;
   if (lessonsIndex >= lessonsPool.length) {
-    shuffleArray(lessonsPool);
-    lessonsIndex = 0;
+    // Out of lessons: disable instead of reshuffle
+    setLessonsButtonEnabled(false);
+    return null;
   }
   return lessonsPool[lessonsIndex++];
 }
@@ -597,16 +607,36 @@ function showBubble(text) {
   document.body.appendChild(wrapper);
 
   const charCount = text.length;
-  const durationSec = Math.max(5, Math.min(10, 3 + 0.025 * charCount));
+  // Triple duration baseline; scale with length
+  const durationSec = Math.max(12, Math.min(30, 9 + 0.075 * charCount));
 
   if (prefersReduced) {
     bubble.style.transition = 'opacity 1s ease';
     bubble.style.opacity = '0';
     setTimeout(() => finishBubble(wrapper), 1000);
   } else {
+    // Animate position via CSS, control opacity via JS reverse quadratic
     bubble.style.setProperty('--hb-bubble-duration', durationSec + 's');
     bubble.classList.add('animate');
-    setTimeout(() => finishBubble(wrapper), durationSec * 1000);
+
+    let start = null;
+    const maxOpacity = 0.95; // stays opaque most of lifetime
+    function step(ts) {
+      if (start === null) start = ts;
+      const elapsed = (ts - start) / 1000;
+      const t = Math.min(1, elapsed / durationSec);
+      // Reverse quadratic: opacity ~ 1 - (t^2) scaled, clamped to keep near-opaque until late
+      const opacity = (1 - t * t * 0.85) * maxOpacity;
+      bubble.style.opacity = String(Math.max(0, Math.min(1, opacity)));
+      if (t < 1) {
+        requestAnimationFrame(step);
+      } else {
+        finishBubble(wrapper);
+      }
+    }
+    // Start with high opacity
+    bubble.style.opacity = String(maxOpacity);
+    requestAnimationFrame(step);
   }
 }
 
@@ -648,7 +678,7 @@ function showToastOnce(message) {
 // -------- PWA registration --------
 function registerServiceWorker() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js').catch(err => console.warn('SW reg failed', err));
+    navigator.serviceWorker.register('sw.js').catch(() => {});
   }
 }
 
@@ -665,4 +695,15 @@ document.addEventListener('DOMContentLoaded', () => {
   fetchStats();
   loadLessons();
   registerServiceWorker();
+
+  // Update "Last published" based on the document's last modified (from GH Pages)
+  (function updateLastPublished(){
+    const el = document.getElementById('last-published');
+    if (!el) return;
+    const zone = { timeZone: 'America/Los_Angeles' };
+    const dt = new Date(document.lastModified || Date.now());
+    const dateStr = dt.toLocaleDateString('en-US', { ...zone, month: 'numeric', day: 'numeric', year: 'numeric' });
+    const timeStr = dt.toLocaleTimeString('en-US', zone);
+    el.textContent = `Last published: ${dateStr}, ${timeStr}`;
+  })();
 });
