@@ -6,6 +6,8 @@
   <title>Heartbreak Healing</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.webmanifest">
   <script>
     // Network shim to suppress CORS errors from external telemetry (e.g., prodregistryv2)
     (function(){
@@ -84,6 +86,7 @@
   <div id="boy-container">
     <img id="boy-image" src="" alt="Charlie's healing journey" aria-label="healing status">
     <button id="shuffle-charlie" title="Shuffle Charlie's appearance">🎲 Shuffle Charlie</button>
+    <button id="valuable-lessons" title="Show a valuable lesson">💬 Valuable lessons</button>
   </div>
 
     <div id="buttons">
@@ -121,6 +124,9 @@
     <details id="patch-notes">
       <summary>Patch Notes</summary>
       <ul>
+        <li>
+          Patch notes <strong>1.4.0</strong> - Day 30 - August 10, 2025 - added "Valuable lessons" floating bubbles, lessons source file, PWA with offline precache, and expanded Stats (Today & Total) including Shuffle Charlie and Valuable Lessons button presses.
+        </li>
         <li>
           Patch notes <strong>1.3.2.3</strong> - Day 29 - August 9, 2025 - simplified log location display with spoiler IP and set “Last published” to Pacific time.
         </li>
@@ -226,12 +232,14 @@
       </ul>
     </details>
 
-    <details id="total-stats">
-      <summary>Total Stats</summary>
+    <details id="stats">
+      <summary>Stats</summary>
       <ul>
-        <li>Progress +/-5 presses: <span id="count-progress">0</span></li>
-        <li>Activity button presses: <span id="count-activity">0</span></li>
-        <li>Dark mode toggles: <span id="count-darkmode">0</span></li>
+        <li>Progress +/-5 presses — Today: <span id="count-progress-today">0</span> · Total: <span id="count-progress-total">0</span></li>
+        <li>Activity button presses — Today: <span id="count-activity-today">0</span> · Total: <span id="count-activity-total">0</span></li>
+        <li>Dark mode toggles — Today: <span id="count-darkmode-today">0</span> · Total: <span id="count-darkmode-total">0</span></li>
+        <li>Shuffle Charlie presses — Today: <span id="count-shuffle_charlie_button_presses-today">0</span> · Total: <span id="count-shuffle_charlie_button_presses-total">0</span></li>
+        <li>Valuable lessons presses — Today: <span id="count-valuable_lessons_button_presses-today">0</span> · Total: <span id="count-valuable_lessons_button_presses-total">0</span></li>
       </ul>
     </details>
 
