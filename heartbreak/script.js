@@ -20,6 +20,9 @@ const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 const GEO_CACHE_KEY = 'hb-geo-cache';
 const GEO_CACHE_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 
+// Cache IP lookups so we don't repeatedly query the geo service
+const locationCache = {};
+
 function loadLocalStats() {
   try {
     return JSON.parse(localStorage.getItem(LOCAL_STATS_KEY)) || {
@@ -106,63 +109,27 @@ function saveLocalLogs(logs) {
   } catch (_) {}
 }
 
-// ------- Frontend IP geolocation (cached) -------
-function loadGeoCache() {
-  try {
-    return JSON.parse(localStorage.getItem(GEO_CACHE_KEY)) || {};
-  } catch (_) {
-    return {};
+function populateLocation(ip, span) {
+  if (!ip || ip === 'local') return;
+  if (locationCache[ip]) {
+    span.textContent = `[${locationCache[ip]}] `;
+    return;
   }
-}
-
-function saveGeoCache(cache) {
-  try { localStorage.setItem(GEO_CACHE_KEY, JSON.stringify(cache)); } catch (_) {}
-}
-
-function isLocalIp(ip) {
-  return !ip || ip === 'local' || ip === '127.0.0.1' || ip === '::1';
-}
-
-async function fetchGeoForIp(ip) {
-  if (isLocalIp(ip)) return null;
-  try {
-    const res = await fetch(`https://ipapi.co/${encodeURIComponent(ip)}/json/`, { cache: 'force-cache' });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return {
-      city: data.city || null,
-      region: data.region || data.region_code || null,
-      country: data.country_name || data.country || null
-    };
-  } catch (_) {
-    return null;
-  }
-}
-
-async function getLocationForIp(ip) {
-  const cache = loadGeoCache();
-  const now = Date.now();
-  const cached = cache[ip];
-  if (cached && (now - cached.cachedAt) < GEO_CACHE_TTL_MS) {
-    return cached.location || null;
-  }
-  const loc = await fetchGeoForIp(ip);
-  cache[ip] = { cachedAt: now, location: loc };
-  saveGeoCache(cache);
-  return loc;
-}
-
-function formatLocation(loc) {
-  if (!loc) return '';
-  const parts = [];
-  if (loc.city) parts.push(loc.city);
-  if (loc.region) parts.push(loc.region);
-  if (loc.country) parts.push(loc.country);
-  return parts.join(', ');
-}
-
-function buildEntryKey(entry) {
-  return `${entry.timestamp}|${entry.event}|${entry.ip || ''}`;
+  fetch(`https://ipapi.co/${ip}/json/`)
+    .then(r => (r.ok ? r.json() : null))
+    .then(data => {
+      if (!data) return;
+      const parts = [];
+      if (data.city) parts.push(data.city);
+      if (data.region) parts.push(data.region);
+      if (data.country_name) parts.push(data.country_name);
+      const loc = parts.join(', ');
+      if (loc) {
+        locationCache[ip] = loc;
+        span.textContent = `[${loc}] `;
+      }
+    })
+    .catch(() => {});
 }
 
 function renderLogs(entries) {
@@ -180,36 +147,32 @@ function renderLogs(entries) {
     const ts = new Date(entry.timestamp).toLocaleString();
     const ip = entry.ip || 'local';
 
-    const timestampNode = document.createTextNode(`[${ts}] `);
-    div.appendChild(timestampNode);
+    div.textContent = `[${ts}] `;
 
     const locSpan = document.createElement('span');
-    locSpan.className = 'log-loc';
-    const locText = formatLocation(entry.location);
-    if (locText) {
-      locSpan.textContent = `[${locText}] `;
-    }
+    locSpan.className = 'log-location';
     div.appendChild(locSpan);
 
     div.appendChild(document.createTextNode(entry.event));
 
     const ipSpan = document.createElement('span');
-    ipSpan.className = 'spoiler ip-spoiler';
-    ipSpan.setAttribute('role', 'button');
-    ipSpan.setAttribute('tabindex', '0');
-    ipSpan.setAttribute('aria-label', 'Reveal IP');
+    ipSpan.className = 'log-ip';
     ipSpan.textContent = ` [${ip}]`;
-    function toggleReveal() { ipSpan.classList.toggle('revealed'); }
-    ipSpan.addEventListener('click', toggleReveal);
-    ipSpan.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleReveal();
-      }
-    });
     div.appendChild(ipSpan);
 
     logEl.appendChild(div);
+
+    const locParts = [];
+    if (entry.location) {
+      if (entry.location.city) locParts.push(entry.location.city);
+      if (entry.location.region) locParts.push(entry.location.region);
+      if (entry.location.country) locParts.push(entry.location.country);
+    }
+    if (locParts.length) {
+      locSpan.textContent = `[${locParts.join(', ')}] `;
+    } else {
+      populateLocation(ip, locSpan);
+    }
   });
 
   // Populate missing locations asynchronously via frontend geolocation

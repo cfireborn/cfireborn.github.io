@@ -303,17 +303,19 @@ h1#title {
 }
 
 .log-location {
-  display: inline;
+  margin-right: 0.25rem;
 }
 
-.log-location > summary {
-  display: inline;
-  cursor: pointer;
-  text-decoration: underline;
+.log-ip {
+  margin-left: 0.25rem;
+  background-color: #000;
+  color: #000;
+  border-radius: 2px;
+  padding: 0 2px;
 }
 
-.log-location > summary::-webkit-details-marker {
-  display: none;
+.log-ip:hover {
+  color: #fff;
 }
 
 /* Spoiler styling for IP to reduce clutter */

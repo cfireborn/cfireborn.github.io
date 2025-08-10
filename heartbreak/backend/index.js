@@ -1,6 +1,5 @@
 const express = require('express');
 const { Pool } = require('pg');
-const fetch = require('node-fetch');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -32,10 +31,7 @@ async function ensureTables() {
     id SERIAL PRIMARY KEY,
     ip TEXT,
     timestamp TIMESTAMPTZ,
-    event TEXT,
-    country TEXT,
-    region TEXT,
-    city TEXT
+    event TEXT
   )`);
 
   // Track counts for various button presses
@@ -47,14 +43,8 @@ async function ensureTables() {
 
 app.get('/logs', async (req, res) => {
   try {
-    const { rows } = await pool.query('SELECT ip, timestamp, event, country, region, city FROM logs ORDER BY id ASC');
-    const logs = rows.map(r => ({
-      ip: r.ip,
-      timestamp: r.timestamp,
-      event: r.event,
-      location: { country: r.country, region: r.region, city: r.city }
-    }));
-    res.json(logs);
+    const { rows } = await pool.query('SELECT ip, timestamp, event FROM logs ORDER BY id ASC');
+    res.json(rows);
   } catch (err) {
     console.error('Failed to read logs', err);
     res.status(500).json({ error: 'failed to read logs' });
@@ -68,34 +58,15 @@ app.post('/log', async (req, res) => {
   const firstForwarded = Array.isArray(forwardedFor) ? forwardedFor[0] : (forwardedFor || '');
   const rawCandidate = (firstForwarded || req.socket.remoteAddress || '').split(',')[0].trim();
   const ip = rawCandidate.replace(/^::ffff:/, '').replace(/^::1$/, '127.0.0.1');
-  let country = null, region = null, city = null;
-
-  try {
-    const geoRes = await fetch(`https://ipapi.co/${ip}/json/`);
-    if (geoRes.ok) {
-      const geo = await geoRes.json();
-      country = geo.country_name;
-      region = geo.region;
-      city = geo.city;
-    }
-  } catch (err) {
-    console.error('Geo lookup failed', err);
-  }
 
   const timestamp = new Date();
 
   try {
     const { rows } = await pool.query(
-      'INSERT INTO logs (ip, timestamp, event, country, region, city) VALUES ($1, $2, $3, $4, $5, $6) RETURNING ip, timestamp, event, country, region, city',
-      [ip, timestamp, event, country, region, city]
+      'INSERT INTO logs (ip, timestamp, event) VALUES ($1, $2, $3) RETURNING ip, timestamp, event',
+      [ip, timestamp, event]
     );
-    const row = rows[0];
-    res.status(201).json({
-      ip: row.ip,
-      timestamp: row.timestamp,
-      event: row.event,
-      location: { country: row.country, region: row.region, city: row.city }
-    });
+    res.status(201).json(rows[0]);
   } catch (err) {
     console.error('Failed to store log', err);
     res.status(500).json({ error: 'failed to store log' });
