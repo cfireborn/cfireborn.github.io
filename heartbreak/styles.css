@@ -420,6 +420,11 @@ body.dark .lesson-bubble {
   to { transform: translateY(-30vh); }
 }
 
+/* Wrapper default to ensure bubble stacking above content */
+.lesson-bubble-wrapper {
+  will-change: transform, left;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .lesson-bubble.animate {
     animation: none;

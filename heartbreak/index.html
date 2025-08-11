@@ -86,7 +86,7 @@
   <div id="boy-container">
     <img id="boy-image" src="" alt="Charlie's healing journey" aria-label="healing status">
     <button id="shuffle-charlie" title="Shuffle Charlie's appearance">🎲 Shuffle Charlie</button>
-    <button id="valuable-lessons" title="Show a valuable lesson">💬 Valuable lessons</button>
+    <button id="valuable-lessons" title="Show a valuable lesson">💬 Valuable Lessons</button>
   </div>
 
     <div id="buttons">
@@ -125,10 +125,10 @@
       <summary>Patch Notes</summary>
       <ul>
         <li>
-          Patch notes <strong>1.4.2</strong> - Day 30 - August 10, 2025 - fixed geolocation display in logs and improved bubble layout to avoid overlap.
+          Patch notes <strong>1.4.3</strong> - Day 30 - August 10, 2025 - enhanced frontend geolocation for logs with multi-provider fallback and caching, added edge-aware lesson bubbles that avoid overlap, capitalized 'Odi et Amo' and 'Knowledge and Communication', refined meaning-of-life prompt and added vote counts under buttons.
         </li>
         <li>
-          Patch notes <strong>1.4.2</strong> - Day 30 - August 10, 2025 - added Meaning of life poll with two buttons tracked in stats.
+          Patch notes <strong>1.4.2</strong> - Day 30 - August 10, 2025 - added Meaning of life poll with two buttons tracked in stats; initial bubble overlap reduction.
         </li>
         <li>
           Patch notes <strong>1.4.1</strong> - Day 30 - August 10, 2025 - fixed log ordering and capped to ~50, tripled lesson bubble lifetime with reverse quadratic fade, IPs hidden until tapped, disabled SW caching for testing, and auto-updating Last published.
@@ -252,17 +252,18 @@
         <li>Dark mode toggles — Today: <span id="count-darkmode-today">0</span> · Total: <span id="count-darkmode-total">0</span></li>
         <li>Shuffle Charlie presses — Today: <span id="count-shuffle_charlie_button_presses-today">0</span> · Total: <span id="count-shuffle_charlie_button_presses-total">0</span></li>
         <li>Valuable lessons presses — Today: <span id="count-valuable_lessons_button_presses-today">0</span> · Total: <span id="count-valuable_lessons_button_presses-total">0</span></li>
-        <li>Odi et amo clicks — Today: <span id="count-meaning_odi_et_amo_clicks-today">0</span> · Total: <span id="count-meaning_odi_et_amo_clicks-total">0</span></li>
-        <li>Knowledge and communication clicks — Today: <span id="count-meaning_knowledge_and_communication_clicks-today">0</span> · Total: <span id="count-meaning_knowledge_and_communication_clicks-total">0</span></li>
+        <li>Odi et Amo clicks — Today: <span id="count-meaning_odi_et_amo_clicks-today">0</span> · Total: <span id="count-meaning_odi_et_amo_clicks-total">0</span></li>
+        <li>Knowledge and Communication clicks — Today: <span id="count-meaning_knowledge_and_communication_clicks-today">0</span> · Total: <span id="count-meaning_knowledge_and_communication_clicks-total">0</span></li>
       </ul>
     </details>
 
     <div id="meaning-of-life">
-      <p>In body text, “what is the meaning of life?”</p>
+      <p>What is the meaning of life?</p>
       <div class="meaning-buttons">
-        <a id="meaning-odi" class="meaning-button" href="https://open.spotify.com/album/6726oR16iFh3xFn6T3WHea?si=avRawPwIRkKIFCF_vUGkUg" target="_blank" rel="noopener noreferrer">Odi et amo</a>
-        <a id="meaning-knowledge" class="meaning-button" href="https://open.spotify.com/album/19p8Yeya44VQQ1l85SjQHd?si=WaYJ6uivSWGX0BKXOMF4_w" target="_blank" rel="noopener noreferrer">knowledge and communication</a>
+        <a id="meaning-odi" class="meaning-button" href="https://open.spotify.com/album/6726oR16iFh3xFn6T3WHea?si=avRawPwIRkKIFCF_vUGkUg" target="_blank" rel="noopener noreferrer">Odi et Amo</a>
+        <a id="meaning-knowledge" class="meaning-button" href="https://open.spotify.com/album/19p8Yeya44VQQ1l85SjQHd?si=WaYJ6uivSWGX0BKXOMF4_w" target="_blank" rel="noopener noreferrer">Knowledge and Communication</a>
       </div>
+      <div id="meaning-votes" style="display:none;margin-top:6px;font-size:0.85rem;color:#666;"></div>
     </div>
 
     <div id="last-published">Last published: 8/10/2025, 8:33:22 AM</div>

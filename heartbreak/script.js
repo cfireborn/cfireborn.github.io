@@ -19,6 +19,8 @@ const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 
 // Cache IP lookups so we don't repeatedly query the geo service
 const locationCache = {};
+// Track the latest stats for consistent UI updates
+const latestCounts = { today: {}, totals: {} };
 
 function loadLocalStats() {
   try {
@@ -90,6 +92,11 @@ function renderStats(stats) {
     if (todayEl) todayEl.textContent = todayVal;
     if (totalEl) totalEl.textContent = totalVal;
   });
+
+  // Store latest counts for other UI elements (e.g., meaning-of-life votes)
+  latestCounts.today = Object.assign({}, today, loadLocalDaily().counts);
+  latestCounts.totals = Object.assign({}, totals, loadLocalStats());
+  updateMeaningVotesLine();
 }
 
 function loadLocalLogs() {
@@ -106,27 +113,85 @@ function saveLocalLogs(logs) {
   } catch (_) {}
 }
 
-function populateLocation(ip, span) {
-  if (!ip || ip === 'local') return;
-  if (locationCache[ip]) {
-    span.textContent = `[${locationCache[ip]}] `;
+async function populateLocation(ip, span) {
+  if (!ip || ip === 'local' || !span) return;
+
+  // Normalize IPv6-embedded IPv4 like ::ffff:1.2.3.4
+  function normalizeIpForLookup(raw) {
+    if (!raw) return raw;
+    // If it looks like IPv6 with last IPv4 segment, extract it
+    const m = String(raw).match(/(\d+\.\d+\.\d+\.\d+)$/);
+    return m ? m[1] : raw;
+  }
+  const nip = normalizeIpForLookup(ip);
+
+  if (locationCache[nip]) {
+    span.textContent = `[${locationCache[nip]}] `;
     return;
   }
-  fetch(`https://ipwho.is/${ip}`, { method: 'GET', referrerPolicy: 'no-referrer' })
-    .then(r => (r.ok ? r.json() : null))
-    .then(data => {
-      if (!data || data.success === false) return;
-      const parts = [];
-      if (data.city) parts.push(data.city);
-      if (data.region) parts.push(data.region);
-      if (data.country) parts.push(data.country);
-      const loc = parts.join(', ');
-      if (loc) {
-        locationCache[ip] = loc;
-        span.textContent = `[${loc}] `;
+
+  function normalizeFromIpwho(data) {
+    const parts = [];
+    if (data.city) parts.push(data.city);
+    const region = data.region || data.region_name || data.state || data.province;
+    if (region) parts.push(region);
+    const country = data.country || data.country_name;
+    if (country) parts.push(country);
+    return parts.join(', ');
+  }
+
+  function normalizeFromIpapi(data) {
+    const parts = [];
+    if (data.city) parts.push(data.city);
+    const region = data.region || data.region_code || data.state || data.province;
+    if (region) parts.push(region);
+    const country = data.country_name || data.country;
+    if (country) parts.push(country);
+    return parts.join(', ');
+  }
+
+  async function fetchWithTimeout(url, opts = {}, ms = 3500) {
+    const controller = new AbortController();
+    const id = setTimeout(() => controller.abort(), ms);
+    try {
+      const res = await fetch(url, { ...opts, signal: controller.signal });
+      clearTimeout(id);
+      return res;
+    } catch (e) {
+      clearTimeout(id);
+      return null;
+    }
+  }
+
+  try {
+    const res1 = await fetchWithTimeout(`https://ipwho.is/${nip}`, { method: 'GET', referrerPolicy: 'no-referrer' });
+    if (res1 && res1.ok) {
+      const data1 = await res1.json();
+      if (data1 && data1.success !== false) {
+        const loc1 = normalizeFromIpwho(data1);
+        if (loc1) {
+          locationCache[nip] = loc1;
+          span.textContent = `[${loc1}] `;
+          return;
+        }
       }
-    })
-    .catch(() => {});
+    }
+  } catch (_) {}
+
+  try {
+    const res2 = await fetchWithTimeout(`https://ipapi.co/${nip}/json/`, { method: 'GET', referrerPolicy: 'no-referrer' });
+    if (res2 && res2.ok) {
+      const data2 = await res2.json();
+      if (data2 && !data2.error) {
+        const loc2 = normalizeFromIpapi(data2);
+        if (loc2) {
+          locationCache[nip] = loc2;
+          span.textContent = `[${loc2}] `;
+          return;
+        }
+      }
+    }
+  } catch (_) {}
 }
 
 function renderLogs(entries) {
@@ -377,15 +442,30 @@ async function sendLog(event) {
 
 // Increment a backend counter and refresh stats
 async function incrementStat(type) {
-  // Optimistic local update
+  // Optimistic local update for ONLY this counter to avoid flicker
+  const baselineTotals = Object.assign({}, latestCounts.totals);
+  const baselineToday = Object.assign({}, latestCounts.today);
+
+  const newTotal = (Number(baselineTotals[type]) || 0) + 1;
+  const newToday = (Number(baselineToday[type]) || 0) + 1;
+
+  // Persist local fallbacks for offline
   const ls = loadLocalStats();
   ls[type] = (ls[type] || 0) + 1;
   saveLocalStats(ls);
   const daily = loadLocalDaily();
   daily.counts[type] = (daily.counts[type] || 0) + 1;
   saveLocalDaily(daily);
-  renderStats({ totals: ls, today: daily.counts });
 
+  // Update displayed spans only for this counter
+  const todayEl = document.getElementById(`count-${type}-today`);
+  const totalEl = document.getElementById(`count-${type}-total`);
+  if (todayEl) todayEl.textContent = String(newToday);
+  if (totalEl) totalEl.textContent = String(newTotal);
+  latestCounts.today[type] = newToday;
+  latestCounts.totals[type] = newTotal;
+  updateMeaningVotesLine();
+ 
   try {
     await fetch(`${LOG_SERVER}/count`, {
       method: 'POST',
@@ -494,11 +574,13 @@ function setupButtons() {
   if (meaningOdi) {
     meaningOdi.addEventListener('click', () => {
       incrementStat('meaning_odi_et_amo_clicks');
+      revealMeaningVotes();
     });
   }
   if (meaningKnowledge) {
     meaningKnowledge.addEventListener('click', () => {
       incrementStat('meaning_knowledge_and_communication_clicks');
+      revealMeaningVotes();
     });
   }
 }
@@ -618,11 +700,8 @@ function showBubble(text) {
   wrapper.className = 'lesson-bubble-wrapper';
   wrapper.style.pointerEvents = 'none';
   wrapper.style.position = 'fixed';
-  wrapper.style.left = '0';
-  wrapper.style.right = '0';
-  wrapper.style.display = 'flex';
-  wrapper.style.justifyContent = 'center';
   wrapper.style.zIndex = '9999';
+  wrapper.style.display = 'block';
 
   // slot positioning to reduce overlap
   const slot = chooseFreeSlot();
@@ -640,6 +719,16 @@ function showBubble(text) {
   bubble.textContent = text;
   wrapper.appendChild(bubble);
   document.body.appendChild(wrapper);
+
+  // Fix bubble width to avoid text reflow while animating
+  const measuredWidth = Math.min(420, Math.max(260, bubble.offsetWidth));
+  bubble.style.width = measuredWidth + 'px';
+
+  // Position near edge based on tail side with small padding
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const viewportPadding = 8;
+  const left = side === 'tail-left' ? viewportPadding : Math.max(viewportPadding, vw - measuredWidth - viewportPadding);
+  wrapper.style.left = `${left}px`;
 
   const charCount = text.length;
   const durationSec = Math.max(12, Math.min(30, 9 + 0.075 * charCount));
@@ -744,3 +833,20 @@ document.addEventListener('DOMContentLoaded', () => {
     el.textContent = `Last published: ${dateStr}, ${timeStr}`;
   })();
 });
+
+function updateMeaningVotesLine() {
+  const container = document.getElementById('meaning-votes');
+  if (!container) return;
+  // Display totals under the buttons
+  const odiTotalEl = document.getElementById('count-meaning_odi_et_amo_clicks-total');
+  const knowTotalEl = document.getElementById('count-meaning_knowledge_and_communication_clicks-total');
+  const odiTotal = odiTotalEl ? Number(odiTotalEl.textContent || '0') : 0;
+  const knowTotal = knowTotalEl ? Number(knowTotalEl.textContent || '0') : 0;
+  container.textContent = `Odi et Amo: ${odiTotal} · Knowledge and Communication: ${knowTotal}`;
+}
+
+function revealMeaningVotes() {
+  updateMeaningVotesLine();
+  const container = document.getElementById('meaning-votes');
+  if (container) container.style.display = 'block';
+}
