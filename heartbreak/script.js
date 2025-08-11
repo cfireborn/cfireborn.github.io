@@ -442,15 +442,30 @@ async function sendLog(event) {
 
 // Increment a backend counter and refresh stats
 async function incrementStat(type) {
-  // Optimistic local update
+  // Optimistic local update for ONLY this counter to avoid flicker
+  const baselineTotals = Object.assign({}, latestCounts.totals);
+  const baselineToday = Object.assign({}, latestCounts.today);
+
+  const newTotal = (Number(baselineTotals[type]) || 0) + 1;
+  const newToday = (Number(baselineToday[type]) || 0) + 1;
+
+  // Persist local fallbacks for offline
   const ls = loadLocalStats();
   ls[type] = (ls[type] || 0) + 1;
   saveLocalStats(ls);
   const daily = loadLocalDaily();
   daily.counts[type] = (daily.counts[type] || 0) + 1;
   saveLocalDaily(daily);
-  renderStats({ totals: ls, today: daily.counts });
 
+  // Update displayed spans only for this counter
+  const todayEl = document.getElementById(`count-${type}-today`);
+  const totalEl = document.getElementById(`count-${type}-total`);
+  if (todayEl) todayEl.textContent = String(newToday);
+  if (totalEl) totalEl.textContent = String(newTotal);
+  latestCounts.today[type] = newToday;
+  latestCounts.totals[type] = newTotal;
+  updateMeaningVotesLine();
+ 
   try {
     await fetch(`${LOG_SERVER}/count`, {
       method: 'POST',
@@ -822,12 +837,12 @@ document.addEventListener('DOMContentLoaded', () => {
 function updateMeaningVotesLine() {
   const container = document.getElementById('meaning-votes');
   if (!container) return;
-  // Pull exactly what the Stats drawer shows for Today to ensure match
-  const odiTodayEl = document.getElementById('count-meaning_odi_et_amo_clicks-today');
-  const knowTodayEl = document.getElementById('count-meaning_knowledge_and_communication_clicks-today');
-  const odiToday = odiTodayEl ? Number(odiTodayEl.textContent || '0') : 0;
-  const knowToday = knowTodayEl ? Number(knowTodayEl.textContent || '0') : 0;
-  container.textContent = `Odi et Amo: ${odiToday} · Knowledge and Communication: ${knowToday}`;
+  // Display totals under the buttons
+  const odiTotalEl = document.getElementById('count-meaning_odi_et_amo_clicks-total');
+  const knowTotalEl = document.getElementById('count-meaning_knowledge_and_communication_clicks-total');
+  const odiTotal = odiTotalEl ? Number(odiTotalEl.textContent || '0') : 0;
+  const knowTotal = knowTotalEl ? Number(knowTotalEl.textContent || '0') : 0;
+  container.textContent = `Odi et Amo: ${odiTotal} · Knowledge and Communication: ${knowTotal}`;
 }
 
 function revealMeaningVotes() {
