@@ -19,6 +19,8 @@ const LOCAL_DAILY_KEY = 'hb-local-daily-stats';
 
 // Cache IP lookups so we don't repeatedly query the geo service
 const locationCache = {};
+// Track the latest stats for consistent UI updates
+const latestCounts = { today: {}, totals: {} };
 
 function loadLocalStats() {
   try {
@@ -90,6 +92,11 @@ function renderStats(stats) {
     if (todayEl) todayEl.textContent = todayVal;
     if (totalEl) totalEl.textContent = totalVal;
   });
+
+  // Store latest counts for other UI elements (e.g., meaning-of-life votes)
+  latestCounts.today = Object.assign({}, today, loadLocalDaily().counts);
+  latestCounts.totals = Object.assign({}, totals, loadLocalStats());
+  updateMeaningVotesLine();
 }
 
 function loadLocalLogs() {
@@ -108,8 +115,18 @@ function saveLocalLogs(logs) {
 
 async function populateLocation(ip, span) {
   if (!ip || ip === 'local' || !span) return;
-  if (locationCache[ip]) {
-    span.textContent = `[${locationCache[ip]}] `;
+
+  // Normalize IPv6-embedded IPv4 like ::ffff:1.2.3.4
+  function normalizeIpForLookup(raw) {
+    if (!raw) return raw;
+    // If it looks like IPv6 with last IPv4 segment, extract it
+    const m = String(raw).match(/(\d+\.\d+\.\d+\.\d+)$/);
+    return m ? m[1] : raw;
+  }
+  const nip = normalizeIpForLookup(ip);
+
+  if (locationCache[nip]) {
+    span.textContent = `[${locationCache[nip]}] `;
     return;
   }
 
@@ -147,13 +164,13 @@ async function populateLocation(ip, span) {
   }
 
   try {
-    const res1 = await fetchWithTimeout(`https://ipwho.is/${ip}`, { method: 'GET', referrerPolicy: 'no-referrer' });
+    const res1 = await fetchWithTimeout(`https://ipwho.is/${nip}`, { method: 'GET', referrerPolicy: 'no-referrer' });
     if (res1 && res1.ok) {
       const data1 = await res1.json();
       if (data1 && data1.success !== false) {
         const loc1 = normalizeFromIpwho(data1);
         if (loc1) {
-          locationCache[ip] = loc1;
+          locationCache[nip] = loc1;
           span.textContent = `[${loc1}] `;
           return;
         }
@@ -162,13 +179,13 @@ async function populateLocation(ip, span) {
   } catch (_) {}
 
   try {
-    const res2 = await fetchWithTimeout(`https://ipapi.co/${ip}/json/`, { method: 'GET', referrerPolicy: 'no-referrer' });
+    const res2 = await fetchWithTimeout(`https://ipapi.co/${nip}/json/`, { method: 'GET', referrerPolicy: 'no-referrer' });
     if (res2 && res2.ok) {
       const data2 = await res2.json();
       if (data2 && !data2.error) {
         const loc2 = normalizeFromIpapi(data2);
         if (loc2) {
-          locationCache[ip] = loc2;
+          locationCache[nip] = loc2;
           span.textContent = `[${loc2}] `;
           return;
         }
@@ -542,13 +559,13 @@ function setupButtons() {
   if (meaningOdi) {
     meaningOdi.addEventListener('click', () => {
       incrementStat('meaning_odi_et_amo_clicks');
-      showMeaningVotes();
+      revealMeaningVotes();
     });
   }
   if (meaningKnowledge) {
     meaningKnowledge.addEventListener('click', () => {
       incrementStat('meaning_knowledge_and_communication_clicks');
-      showMeaningVotes();
+      revealMeaningVotes();
     });
   }
 }
@@ -669,7 +686,6 @@ function showBubble(text) {
   wrapper.style.pointerEvents = 'none';
   wrapper.style.position = 'fixed';
   wrapper.style.zIndex = '9999';
-  // width auto, we'll set left explicitly for edge-aware positioning
   wrapper.style.display = 'block';
 
   // slot positioning to reduce overlap
@@ -689,39 +705,22 @@ function showBubble(text) {
   wrapper.appendChild(bubble);
   document.body.appendChild(wrapper);
 
+  // Fix bubble width to avoid text reflow while animating
+  const measuredWidth = Math.min(420, Math.max(260, bubble.offsetWidth));
+  bubble.style.width = measuredWidth + 'px';
+
+  // Position near edge based on tail side with small padding
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  const viewportPadding = 8;
+  const left = side === 'tail-left' ? viewportPadding : Math.max(viewportPadding, vw - measuredWidth - viewportPadding);
+  wrapper.style.left = `${left}px`;
+
   const charCount = text.length;
   const durationSec = Math.max(12, Math.min(30, 9 + 0.075 * charCount));
-
-  // Horizontal edge-aware positioning and gentle drift with edge bounce
-  const viewportPadding = 8; // px from screen edges
-  function measure() {
-    const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-    const bw = bubble.offsetWidth;
-    return { vw, bw };
-  }
-  let { vw, bw } = measure();
-  let x = side === 'tail-left' ? viewportPadding + 8 : Math.max(viewportPadding, vw - bw - viewportPadding - 8);
-  wrapper.style.left = `${x}px`;
-  let vx = side === 'tail-left' ? 35 : -35; // px/sec
-
-  // Recalculate on resize to keep within bounds
-  let resizeTimeout = null;
-  const onResize = () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-      ({ vw, bw } = measure());
-      const minX = viewportPadding;
-      const maxX = Math.max(minX, vw - bw - viewportPadding);
-      x = Math.min(maxX, Math.max(minX, x));
-      wrapper.style.left = `${x}px`;
-    }, 100);
-  };
-  window.addEventListener('resize', onResize, { passive: true });
 
   const cleanup = () => {
     // free slot and remove
     occupiedSlots = occupiedSlots.filter(s => s !== slot);
-    window.removeEventListener('resize', onResize);
     finishBubble(wrapper);
   };
 
@@ -734,7 +733,6 @@ function showBubble(text) {
     bubble.classList.add('animate');
 
     let start = null;
-    let prevTs = null;
     const maxOpacity = 0.95;
     function step(ts) {
       if (start === null) start = ts;
@@ -742,23 +740,6 @@ function showBubble(text) {
       const t = Math.min(1, elapsed / durationSec);
       const opacity = (1 - t * t * 0.85) * maxOpacity;
       bubble.style.opacity = String(Math.max(0, Math.min(1, opacity)));
-
-      // horizontal drift with edge bounce
-      if (prevTs === null) prevTs = ts;
-      const dt = Math.min(0.05, Math.max(0, (ts - prevTs) / 1000)); // clamp to avoid jumps
-      prevTs = ts;
-      // update measurements occasionally
-      if (Math.floor(elapsed * 10) % 5 === 0) {
-        const m = measure();
-        vw = m.vw; bw = m.bw;
-      }
-      x += vx * dt;
-      const minX = viewportPadding;
-      const maxX = Math.max(minX, vw - bw - viewportPadding);
-      if (x <= minX) { x = minX; vx = Math.abs(vx); }
-      if (x >= maxX) { x = maxX; vx = -Math.abs(vx); }
-      wrapper.style.left = `${x}px`;
-
       if (t < 1) {
         requestAnimationFrame(step);
       } else {
@@ -838,13 +819,19 @@ document.addEventListener('DOMContentLoaded', () => {
   })();
 });
 
-function showMeaningVotes() {
+function updateMeaningVotesLine() {
   const container = document.getElementById('meaning-votes');
   if (!container) return;
-  const odi = document.getElementById('count-meaning_odi_et_amo_clicks-total');
-  const know = document.getElementById('count-meaning_knowledge_and_communication_clicks-total');
-  const odiCount = odi ? Number(odi.textContent || '0') : 0;
-  const knowCount = know ? Number(know.textContent || '0') : 0;
-  container.textContent = `Odi et Amo: ${odiCount} · Knowledge and Communication: ${knowCount}`;
-  container.style.display = 'block';
+  // Pull exactly what the Stats drawer shows for Today to ensure match
+  const odiTodayEl = document.getElementById('count-meaning_odi_et_amo_clicks-today');
+  const knowTodayEl = document.getElementById('count-meaning_knowledge_and_communication_clicks-today');
+  const odiToday = odiTodayEl ? Number(odiTodayEl.textContent || '0') : 0;
+  const knowToday = knowTodayEl ? Number(knowTodayEl.textContent || '0') : 0;
+  container.textContent = `Odi et Amo: ${odiToday} · Knowledge and Communication: ${knowToday}`;
+}
+
+function revealMeaningVotes() {
+  updateMeaningVotesLine();
+  const container = document.getElementById('meaning-votes');
+  if (container) container.style.display = 'block';
 }
