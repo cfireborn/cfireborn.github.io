@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Heartbreak Healing</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <meta name="theme-color" content="#000000">
+  <link rel="manifest" href="manifest.webmanifest">
+  <script>
+    // Network shim to suppress CORS errors from external telemetry (e.g., prodregistryv2)
+    (function(){
+      const blockedHosts = ['prodregistryv2.org'];
+      const originalFetch = window.fetch ? window.fetch.bind(window) : null;
+      if (originalFetch) {
+        window.fetch = function(input, init){
+          try {
+            const url = typeof input === 'string' ? input : (input && input.url);
+            if (url && blockedHosts.some(h => url.includes(h))) {
+              return Promise.resolve(new Response('{}', { status: 200, headers: { 'Content-Type': 'application/json' } }));
+            }
+          } catch (e) {}
+          return originalFetch(input, init);
+        };
+      }
+      const OriginalXHR = window.XMLHttpRequest;
+      if (OriginalXHR) {
+        function ShimmedXHR(){
+          const xhr = new OriginalXHR();
+          let _url = '';
+          const blocked = () => _url && blockedHosts.some(h => _url.includes(h));
+          const originalOpen = xhr.open;
+          xhr.open = function(method, url){ _url = String(url || ''); return originalOpen.apply(xhr, arguments); };
+          const originalSend = xhr.send;
+          xhr.send = function(){
+            if (blocked()) {
+              setTimeout(() => {
+                Object.defineProperty(xhr, 'status', { value: 200 });
+                Object.defineProperty(xhr, 'responseText', { value: '{}' });
+                if (typeof xhr.onload === 'function') xhr.onload();
+                xhr.dispatchEvent && xhr.dispatchEvent(new Event('load'));
+              }, 0);
+              return;
+            }
+            return originalSend.apply(xhr, arguments);
+          };
+          return xhr;
+        }
+        window.XMLHttpRequest = ShimmedXHR;
+      }
+      const originalBeacon = navigator.sendBeacon && navigator.sendBeacon.bind(navigator);
+      if (originalBeacon) {
+        navigator.sendBeacon = function(url, data){
+          if (url && blockedHosts.some(h => String(url).includes(h))) return true;
+          return originalBeacon(url, data);
+        };
+      }
+    })();
+  </script>
+</head>
+<body>
+  <button id="mode-toggle" aria-label="Toggle dark mode">💡</button>
+  <div id="flavor-note">NEW Aug 9: week of vacation and family reunion brought up a lot of old fond memories and I took some steps back 50->35% my therapist says grief is not a linear process which SUCKS</div>
+  <h1 id="title">Charlie's Heartbreak Healing Progress</h1>
+  <p id="project-blurb">Charlie broke up with his partner on July 11, 2025, <span id="days-since"></span> days ago. Track how he's doing by checking in on this page. Press buttons to suggest what he should do to keep on healing. Look at images highly representative of his current mood and state. Text him how to improve this project.</p>
+  <div id="progress-wrapper">
+    <div id="progress-bar"></div>
+    <div id="progress-label"></div>
+  </div>
+  <div id="phase-markers">
+    <span class="phase" style="left:0%">0%<br>Denial</span>
+    <span class="phase" style="left:15%">15%<br>Anger</span>
+    <span class="phase" style="left:30%">30%<br>Bargaining</span>
+    <span class="phase" style="left:45%">45%<br>Depression</span>
+    <span class="phase" style="left:60%">60%<br>Acceptance</span>
+    <span class="phase" style="left:75%">75%<br>Hope</span>
+    <span class="phase" style="left:90%">90%<br>Healing</span>
+    <span class="phase" style="left:100%">100%<br>Healed</span>
+  </div>
+  <div id="progress-controls">
+    <button id="decrease-progress" aria-label="Decrease progress">-5%</button>
+    <button id="increase-progress" aria-label="Increase progress">+5%</button>
+  </div>
+  
+  <div id="boy-container">
+    <img id="boy-image" src="" alt="Charlie's healing journey" aria-label="healing status">
+    <button id="shuffle-charlie" title="Shuffle Charlie's appearance">🎲 Shuffle Charlie</button>
+    <button id="valuable-lessons" title="Show a valuable lesson">💬 Valuable Lessons</button>
+  </div>
+
+    <div id="buttons">
+      <button data-emoji="💪" data-action="exercise">💪 Exercise</button>
+      <button data-emoji="📝" data-action="write">
+        📝 Write no-send letters
+      </button>
+      <button data-emoji="🧠" data-action="therapy">
+        🧠 Go to therapy
+      </button>
+      <button data-emoji="🍲" data-action="eat">🍲 Eat food</button>
+      <button data-emoji="🧑‍🤝‍🧑" data-action="friends">
+        🧑‍🤝‍🧑 Spend time with friends
+      </button>
+      <button data-emoji="🤝" data-action="meet">
+        🤝 Get to know other new people
+      </button>
+      <button data-emoji="👪" data-action="family">
+        👪 Spend time with family
+      </button>
+      <button data-emoji="✈️" data-action="travel">✈️ Travel (solo?)</button>
+      <button data-emoji="📚" data-action="learn">
+        📚 Learn something new
+      </button>
+      <button data-emoji="😭" data-action="cry">
+        😭 Cry (with sad music?) and mourn
+      </button>
+      <button data-emoji="😴" data-action="sleep">😴 Get good sleep</button>
+    </div>
+
+    <script src="imageRandomizer.js"></script>
+    <div id="log" aria-live="polite"></div>
+    <script src="script.js"></script>
+
+    <details id="patch-notes">
+      <summary>Patch Notes</summary>
+      <ul>
+        <li>
+          Patch notes <strong>1.4.3.1</strong> - Day 30 - August 10, 2025 - simplified therapy button label.
+        </li>
+        <li>
+          Patch notes <strong>1.4.3</strong> - Day 30 - August 10, 2025 - enhanced frontend geolocation for logs with multi-provider fallback and caching, added edge-aware lesson bubbles that avoid overlap, capitalized 'Odi et Amo' and 'Knowledge and Communication', refined meaning-of-life prompt and added vote counts under buttons.
+        </li>
+        <li>
+          Patch notes <strong>1.4.2</strong> - Day 30 - August 10, 2025 - added Meaning of life poll with two buttons tracked in stats; initial bubble overlap reduction.
+        </li>
+        <li>
+          Patch notes <strong>1.4.1</strong> - Day 30 - August 10, 2025 - fixed log ordering and capped to ~50, tripled lesson bubble lifetime with reverse quadratic fade, IPs hidden until tapped, disabled SW caching for testing, and auto-updating Last published.
+        </li>
+        <li>
+          Patch notes <strong>1.4.0.1</strong> - Day 30 - August 10, 2025 - frontend IP geolocation for logs with spoilered IP addresses.
+        </li>
+        <li>
+          Patch notes <strong>1.4.0</strong> - Day 30 - August 10, 2025 - added "Valuable lessons" floating bubbles, lessons source file, PWA with offline precache, and expanded Stats (Today & Total) including Shuffle Charlie and Valuable Lessons button presses.
+        </li>
+        <li>
+          Patch notes <strong>1.3.2.3</strong> - Day 29 - August 9, 2025 - simplified log location display with spoiler IP and set “Last published” to Pacific time.
+        </li>
+        <li>
+          Patch notes <strong>1.3.2.2</strong> - Day 29 - August 9, 2025 - “Last published” footer now derives from the latest commit timestamp at build time.
+        </li>
+        <li>
+          Patch notes <strong>1.3.2.1</strong> - Day 29 - August 9, 2025 - debugging CORS console noise; added network shim to block external registry calls.
+        </li>
+        <li>
+          Patch notes <strong>1.3.2</strong> - Day 29 - August 9, 2025 - added Total Stats drawer with button press counters.
+        </li>
+        <li>
+          Patch notes <strong>1.3.1</strong> - Day 29 - August 9, 2025 - added day counts and dates to patch notes.
+        </li>
+        <li>
+          Patch notes <strong>1.3.0</strong> - Day 29 - August 9, 2025 - setback to 35%. Added synced logs for Charlie’s supporters.
+        </li>
+        <li>
+          Patch notes <strong>1.2.latest</strong> - Day 28 - August 8, 2025 - retired flavor text “NEW: wrote important no-send letter on a plane and did some intense breakthwork. And a therapy worksheet. 15%->50%. From Anger to Depression! Yay! I'm depressed”
+        </li>
+        <li>
+          Patch notes <strong>1.1.6</strong> - Day 28 - August 8, 2025 - switched patch notes header to the default sans-serif font.
+        </li>
+        <li>
+          Patch notes <strong>1.1.5</strong> - Day 28 - August 8, 2025 - softened patch notes styling, added spacing, and collapsed notes into a dropdown.
+        </li>
+        <li>
+          Patch notes <strong>1.1.4</strong> - Day 28 - August 8, 2025 - added patch notes.
+        </li>
+        <li>
+          Patch notes <strong>1.1.3</strong> - Day 28 - August 8, 2025 - added dark mode toggle to top right.
+        </li>
+        <li>
+          Patch notes <strong>1.1.2</strong> - Day 19 - July 30, 2025 - moved the progress control
+          buttons lower on the page to improve spacing.
+        </li>
+        <li>
+          Patch notes <strong>1.1.1</strong> - Day 19 - July 30, 2025 - repositioned the flavor note and
+          added a subtle shadow for readability.
+        </li>
+        <li>
+          Patch notes <strong>1.1.0</strong> - Day 19 - July 30, 2025 - raised baseline healing from 15%
+          to 50%, introduced pulsing flavor text, and placed the progress bar
+          beneath the mood markers.
+        </li>
+        <li>
+          Patch notes <strong>1.0.12</strong> - Day 17 - July 28, 2025 - enabled the shuffle button to
+          choose a random art style.
+        </li>
+        <li>
+          Patch notes <strong>1.0.11</strong> - Day 15 - July 26, 2025 - increased the healing progress
+          awarded for each activity.
+        </li>
+        <li>
+          Patch notes <strong>1.0.10</strong> - Day 15 - July 26, 2025 - refined progress markers and
+          adjusted title spacing for clarity.
+        </li>
+        <li>
+          Patch notes <strong>1.0.9</strong> - Day 15 - July 26, 2025 - added vertical phase markers and
+          repositioned the controls.
+        </li>
+        <li>
+          Patch notes <strong>1.0.8</strong> - Day 15 - July 26, 2025 - introduced buttons for manually
+          adjusting progress.
+        </li>
+        <li>
+          Patch notes <strong>1.0.7</strong> - Day 15 - July 26, 2025 - calculated the days elapsed since
+          July 11, 2025.
+        </li>
+        <li>
+          Patch notes <strong>1.0.6</strong> - Day 15 - July 26, 2025 - added a page header and an
+          explanatory context blurb.
+        </li>
+        <li>
+          Patch notes <strong>1.0.5</strong> - Day 15 - July 26, 2025 - implemented image shuffling while
+          maintaining stage and style consistency.
+        </li>
+        <li>
+          Patch notes <strong>1.0.4</strong> - Day 15 - July 26, 2025 - integrated an activity log to
+          track actions.
+        </li>
+        <li>
+          Patch notes <strong>1.0.3</strong> - Day 15 - July 26, 2025 - introduced a dynamic Charlie
+          image system with randomizer and shuffle.
+        </li>
+        <li>
+          Patch notes <strong>1.0.2</strong> - Day 15 - July 26, 2025 - added an image randomizer with
+          prompts and configuration for healing stages.
+        </li>
+        <li>
+          Patch notes <strong>1.0.1</strong> - Day 15 - July 26, 2025 - added a progress label to display
+          the current healing percentage.
+        </li>
+        <li>
+          Patch notes <strong>1.0.0</strong> - Day 15 - July 26, 2025 - established the heartbreak
+          healing page with a progress bar and emoji buttons.
+        </li>
+        <li>
+          Patch notes <strong>0.0.0</strong> - Day 15 - July 26, 2025 - created the initial page
+          framework without information.
+        </li>
+      </ul>
+    </details>
+
+    <details id="stats">
+      <summary>Stats</summary>
+      <ul>
+        <li>Progress +/-5 presses — Today: <span id="count-progress-today">0</span> · Total: <span id="count-progress-total">0</span></li>
+        <li>Activity button presses — Today: <span id="count-activity-today">0</span> · Total: <span id="count-activity-total">0</span></li>
+        <li>Dark mode toggles — Today: <span id="count-darkmode-today">0</span> · Total: <span id="count-darkmode-total">0</span></li>
+        <li>Shuffle Charlie presses — Today: <span id="count-shuffle_charlie_button_presses-today">0</span> · Total: <span id="count-shuffle_charlie_button_presses-total">0</span></li>
+        <li>Valuable lessons presses — Today: <span id="count-valuable_lessons_button_presses-today">0</span> · Total: <span id="count-valuable_lessons_button_presses-total">0</span></li>
+        <li>Odi et Amo clicks — Today: <span id="count-meaning_odi_et_amo_clicks-today">0</span> · Total: <span id="count-meaning_odi_et_amo_clicks-total">0</span></li>
+        <li>Knowledge and Communication clicks — Today: <span id="count-meaning_knowledge_and_communication_clicks-today">0</span> · Total: <span id="count-meaning_knowledge_and_communication_clicks-total">0</span></li>
+      </ul>
+    </details>
+
+    <div id="meaning-of-life">
+      <p>What is the meaning of life?</p>
+      <div class="meaning-buttons">
+        <a id="meaning-odi" class="meaning-button" href="https://open.spotify.com/album/6726oR16iFh3xFn6T3WHea?si=avRawPwIRkKIFCF_vUGkUg" target="_blank" rel="noopener noreferrer">Odi et Amo</a>
+        <a id="meaning-knowledge" class="meaning-button" href="https://open.spotify.com/album/19p8Yeya44VQQ1l85SjQHd?si=WaYJ6uivSWGX0BKXOMF4_w" target="_blank" rel="noopener noreferrer">Knowledge and Communication</a>
+      </div>
+      <div id="meaning-votes" style="display:none;margin-top:6px;font-size:0.85rem;color:#666;"></div>
+    </div>
+
+    <div id="last-published">Last published: 8/10/2025, 8:33:22 AM</div>
+  </body>
+</html>
