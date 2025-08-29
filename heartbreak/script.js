@@ -1,5 +1,5 @@
 // Starting healing progress percentage
-let progress = 35; // percent
+let progress = 45; // percent
 
 let currentImagePath = '';
 // July 11, 2025 at midnight UTC
