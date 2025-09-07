@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creme Brulee of the Day</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" type="image/png" href="art/brulee-favicon.png">
+</head>
+<body>
+  <audio id="woosh-sound" src="sfx/burning-woosh.mp3" preload="auto"></audio>
+  <div id="game-container">
+    <div id="brulee-image-container">
+      <img id="brulee-uncooked" src="art/unseared.png" alt="Unseared Creme Brulee">
+      <img id="brulee-partial" src="art/partial-sear.png" alt="Partial Sear Creme Brulee">
+    </div>
+    <button id="brulee-button">Brulee</button>
+    <p id="result-message"></p>
+    <p class="version">t1.0.5</p>
+    <div class="accordion">
+      <button class="accordion-button">Credits</button>
+      <div class="accordion-content">
+        <p>Made by First Draft Games:</p>
+        <ul>
+          <li>Andrew Weller</li>
+          <li>Reuben Levine</li>
+          <li>Charlie Feuerborn</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <script type="module" src="dist/game.js"></script>
+  <script>
+    document.querySelector('.accordion-button').addEventListener('click', function() {
+      this.classList.toggle('active');
+      var content = this.nextElementSibling;
+      if (content.style.maxHeight) {
+        content.style.maxHeight = null;
+      } else {
+        content.style.maxHeight = content.scrollHeight + "px";
+      }
+    });
+  </script>
+</body>
+</html>
