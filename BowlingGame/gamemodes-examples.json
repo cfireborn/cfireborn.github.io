@@ -1,0 +1,63 @@
+{
+  "_comment": "This file contains example game mode configurations for candidates to experiment with",
+  
+  "standardMode": {
+    "modeName": "Standard",
+    "description": "Standard 10-pin bowling rules with strikes, spares, and 10 frames",
+    "totalFrames": 10,
+    "totalPins": 10,
+    "strikeBonus": 10,
+    "spareBonus": 10,
+    "allowExtraBalls": true,
+    "customSparePoints": 0,
+    "enableRandomRolls": false
+  },
+  
+  "powerSpareMode": {
+    "modeName": "Power Spare Mode",
+    "description": "Alternative mode where spares give bonus points and only 5 frames are played",
+    "totalFrames": 5,
+    "totalPins": 10,
+    "strikeBonus": 10,
+    "spareBonus": 0,
+    "allowExtraBalls": true,
+    "customSparePoints": 15,
+    "enableRandomRolls": false
+  },
+  
+  "speedBowling": {
+    "modeName": "Speed Bowling",
+    "description": "Quick 3-frame game with enhanced bonuses",
+    "totalFrames": 3,
+    "totalPins": 10,
+    "strikeBonus": 20,
+    "spareBonus": 15,
+    "allowExtraBalls": false,
+    "customSparePoints": 0,
+    "enableRandomRolls": false
+  },
+  
+  "ninePinMode": {
+    "modeName": "Nine Pin Classic",
+    "description": "Traditional 9-pin bowling variant",
+    "totalFrames": 10,
+    "totalPins": 9,
+    "strikeBonus": 9,
+    "spareBonus": 9,
+    "allowExtraBalls": true,
+    "customSparePoints": 0,
+    "enableRandomRolls": false
+  },
+  
+  "randomTestMode": {
+    "modeName": "Random Test Mode",
+    "description": "Automated testing mode with random rolls - useful for debugging",
+    "totalFrames": 10,
+    "totalPins": 10,
+    "strikeBonus": 10,
+    "spareBonus": 10,
+    "allowExtraBalls": true,
+    "customSparePoints": 0,
+    "enableRandomRolls": true
+  }
+}
