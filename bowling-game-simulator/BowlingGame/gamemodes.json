@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Standard",
+    "description": "Standard 10-frame bowling with strikes and spares",
+    "totalFrames": 10,
+    "maxPinsPerFrame": 10,
+    "strikeBonus": 10,
+    "spareBonus": 5,
+    "useRandomRolls": false
+  },
+  {
+    "name": "Quick Game",
+    "description": "A shorter 5-frame game for quick play",
+    "totalFrames": 5,
+    "maxPinsPerFrame": 10,
+    "strikeBonus": 10,
+    "spareBonus": 5,
+    "useRandomRolls": false
+  },
+  {
+    "name": "High Stakes",
+    "description": "Extra points for strikes and spares make every shot count!",
+    "totalFrames": 10,
+    "maxPinsPerFrame": 10,
+    "strikeBonus": 20,
+    "spareBonus": 10,
+    "useRandomRolls": false
+  },
+  {
+    "name": "Random Chaos",
+    "description": "Let the computer roll for you - pure luck!",
+    "totalFrames": 10,
+    "maxPinsPerFrame": 10,
+    "strikeBonus": 10,
+    "spareBonus": 5,
+    "useRandomRolls": true
+  },
+  {
+    "name": "Nine Pin No-Tap",
+    "description": "Knocking down 9 pins counts as a strike!",
+    "totalFrames": 10,
+    "maxPinsPerFrame": 10,
+    "strikeBonus": 15,
+    "spareBonus": 5,
+    "useRandomRolls": false
+  }
+]
